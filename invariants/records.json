@@ -1,0 +1,51 @@
+[
+  {
+    "id": "DWN-REC-001",
+    "statement": "A DWN message is a signed operation description; a Record is logical state derived from accepted retained messages.",
+    "contract": "normative",
+    "sources": ["dwn/foundations.md", "dwn/records.md"],
+    "related": ["implementation/records-state-machine.md"]
+  },
+  {
+    "id": "DWN-REC-002",
+    "statement": "The initial RecordsWrite establishes Record identity and immutable fields that later updates must preserve.",
+    "contract": "normative",
+    "sources": ["dwn/records.md"],
+    "related": ["conformance/records.md"]
+  },
+  {
+    "id": "DWN-REC-003",
+    "statement": "Duplicate delivery of the same signed message must be idempotent with respect to logical Record state.",
+    "contract": "implementation-contract",
+    "sources": ["dwn/distributed-semantics.md", "implementation/records-state-machine.md"],
+    "related": ["conformance/records.md"]
+  },
+  {
+    "id": "DWN-REC-004",
+    "statement": "The final logical state of a Record must not depend on network delivery order when replicas possess the same valid message set.",
+    "contract": "implementation-contract",
+    "sources": ["dwn/distributed-semantics.md", "implementation/records-state-machine.md"],
+    "related": ["conformance/records.md"]
+  },
+  {
+    "id": "ENBOX-REC-001",
+    "statement": "In the current Enbox convergence model, a terminal delete dominates stale competing writes and prevents resurrection regardless of delivery order.",
+    "contract": "enbox-parity",
+    "sources": ["dwn/records.md", "enbox/records.md"],
+    "related": ["enboxorg/enbox-rust-core#189", "conformance/records.md"]
+  },
+  {
+    "id": "DWN-REC-005",
+    "statement": "Retained message history and latest visible Record state are distinct projections and must not be conflated.",
+    "contract": "implementation-contract",
+    "sources": ["dwn/records.md", "enbox/storage.md"],
+    "related": ["implementation/storage-contracts.md"]
+  },
+  {
+    "id": "DWN-REC-006",
+    "statement": "A state transition that changes latest logical Record state and its durable replication visibility must not leave a crash-observable split-brain between those projections.",
+    "contract": "implementation-contract",
+    "sources": ["implementation/storage-contracts.md", "decisions/0004-store-owned-record-transitions.md"],
+    "related": ["enboxorg/enbox-rust-core#169", "enboxorg/enbox-rust-core#189"]
+  }
+]
