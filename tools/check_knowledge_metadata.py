@@ -48,6 +48,8 @@ def check_guide_dir(dirname: str, domain: str) -> None:
     if not directory.exists():
         return
     for path in sorted(directory.glob("*.md")):
+        if path.name == "README.md":
+            continue
         meta = parse_front_matter(path)
         for key in ("domain", "kind", "reviewed"):
             if not meta.get(key):
