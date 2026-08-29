@@ -5,18 +5,27 @@ Guidance for coding agents working on Enbox and DWN-related code.
 ## Before changing DWN behaviour
 
 1. Read the relevant document under `dwn/` for the semantic invariant.
-2. Read the relevant document under `enbox/` for implementation architecture.
-3. Check linked GitHub issues for known parity gaps or intentional divergences.
-4. Distinguish the DWN draft from current `enboxorg/enbox` TypeScript behaviour and current `enboxorg/enbox-rust-core` behaviour.
-5. For Rust parity work, current TypeScript Enbox is the behavioural target where a documented draft divergence exists.
+2. Read the relevant document under `enbox/` for current Enbox implementation architecture.
+3. Read `implementation/` for engine-level contracts and `conformance/` for expected observable behaviours.
+4. Check linked GitHub issues for known parity gaps or intentional divergences.
+5. Distinguish the DWN draft from current `enboxorg/enbox` TypeScript behaviour and current `enboxorg/enbox-rust-core` behaviour.
+6. For Rust parity work, current TypeScript Enbox is the behavioural target where a documented draft divergence exists.
 
 ## Before building on DWNs
 
 1. Read the relevant `dwn/` pages first; they remain the semantic authority.
 2. Use `builders/` for design guidance, trade-offs, and application patterns.
 3. Treat builder guidance as synthesis, not a substitute for protocol semantics.
-4. Start protocol design from actors, authority, lifecycle, context structure, query needs, and offline behavior before writing the protocol JSON.
+4. Start protocol design from actors, authority, lifecycle, context structure, query needs, and offline behavior before writing protocol JSON.
 5. Check `examples/` once available for worked designs, but do not cargo-cult an example into a different authority model.
+
+## Before implementing a DWN engine
+
+1. Use `implementation/` to identify the required processing, storage, authorization, replication, dependency, and error contracts.
+2. Use `conformance/` to turn those contracts into behavior-focused tests.
+3. Do not copy Enbox internals unless the internal structure is itself a documented decision; conformance is about externally observable semantics.
+4. Label fixtures that target an intentional Enbox/spec divergence as implementation-parity rather than normative conformance.
+5. Test delivery-order permutations, crash/reopen boundaries, duplicate delivery, dependency repair, and authorization state changes.
 
 ## Core rules
 
@@ -62,4 +71,4 @@ When code or upstream semantics change:
 - record the reference upstream commit for implementation-derived claims,
 - link spec divergences to `enboxorg/dwn-spec` issues,
 - avoid presenting implementation behaviour as normative spec behaviour,
-- review affected `builders/` pages when their underlying DWN or Enbox assumptions change.
+- review affected `builders/`, `implementation/`, and `conformance/` pages when their assumptions change.
