@@ -15,9 +15,11 @@ Guidance for coding agents working on Enbox and DWN-related code.
 
 1. Read the relevant `dwn/` pages first; they remain the semantic authority.
 2. Use `builders/` for design guidance, trade-offs, and application patterns.
-3. Treat builder guidance as synthesis, not a substitute for protocol semantics.
-4. Start protocol design from actors, authority, lifecycle, context structure, query needs, and offline behavior before writing protocol JSON.
-5. Check `examples/` once available for worked designs, but do not cargo-cult an example into a different authority model.
+3. Use `examples/` to see the builder process applied end-to-end.
+4. Treat builder guidance and examples as synthesis, not a substitute for protocol semantics.
+5. Start protocol design from actors, authority, lifecycle, context structure, query needs, privacy/encryption, and offline behaviour before writing protocol JSON.
+6. Do not cargo-cult an example into a different authority model. Rebuild the actor/authorization matrix first.
+7. Validate illustrative protocol JSON/action syntax against the current draft and runtime before production use.
 
 ## Before implementing a DWN engine
 
@@ -61,7 +63,8 @@ For application/protocol design, also review:
 - metadata leakage through tags/indexes,
 - schema/protocol evolution,
 - offline stale-authority operations,
-- key recovery and membership-change effects.
+- key recovery and membership-change effects,
+- whether an example's assumptions actually match the target product.
 
 ## Knowledge maintenance
 
@@ -71,4 +74,4 @@ When code or upstream semantics change:
 - record the reference upstream commit for implementation-derived claims,
 - link spec divergences to `enboxorg/dwn-spec` issues,
 - avoid presenting implementation behaviour as normative spec behaviour,
-- review affected `builders/`, `implementation/`, and `conformance/` pages when their assumptions change.
+- review affected `builders/`, `examples/`, `implementation/`, and `conformance/` pages when their assumptions change.
