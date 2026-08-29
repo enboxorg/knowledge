@@ -1,0 +1,51 @@
+[
+  {
+    "id": "DWN-ID-001",
+    "statement": "Signature verification resolves the JWS verification method and proves control of the corresponding signing key; it does not by itself authorize the operation.",
+    "contract": "normative",
+    "sources": ["dwn/identity-and-signatures.md", "dwn/authorization.md"],
+    "related": ["implementation/authorization-evaluation.md"]
+  },
+  {
+    "id": "DWN-ID-002",
+    "statement": "Historical verification may require DID/key state appropriate to the message's signing context; resolving only current DID state can be insufficient after key rotation.",
+    "contract": "normative",
+    "sources": ["dwn/identity-and-signatures.md"],
+    "related": ["enboxorg/dwn-spec#66", "conformance/identity-attestation-topology.md"]
+  },
+  {
+    "id": "DWN-ATT-001",
+    "statement": "An attestation endorses a specific RecordsWrite descriptor commitment and does not automatically carry forward to a later Record version.",
+    "contract": "normative",
+    "sources": ["dwn/attestations.md"],
+    "related": ["conformance/identity-attestation-topology.md"]
+  },
+  {
+    "id": "DWN-ENC-001",
+    "statement": "Authorization to read and possession of decryption material are separate capabilities; both may be required for useful plaintext access.",
+    "contract": "normative",
+    "sources": ["dwn/encryption.md", "dwn/protocols.md"],
+    "related": ["conformance/encryption.md"]
+  },
+  {
+    "id": "DWN-ENC-002",
+    "statement": "Encryption key distribution is a lifecycle problem distinct from ciphertext generation and must account for membership changes, rotation, recovery, and future access.",
+    "contract": "implementation-contract",
+    "sources": ["dwn/encryption.md", "builders/encryption-patterns.md"],
+    "related": ["examples/encrypted-agent-workspace.md"]
+  },
+  {
+    "id": "DWN-ENC-003",
+    "statement": "Revoking future authorization or future key delivery cannot erase plaintext or key material already obtained by a former participant.",
+    "contract": "implementation-contract",
+    "sources": ["builders/encryption-patterns.md", "examples/encrypted-agent-workspace.md"],
+    "related": ["conformance/encryption.md"]
+  },
+  {
+    "id": "ENBOX-ENC-001",
+    "statement": "Current TypeScript Enbox role-audience encryption control uses reserved $encryption/audience and $encryption/delivery records rather than the draft audienceEpoch/audienceKey lifecycle.",
+    "contract": "enbox-parity",
+    "sources": ["enbox/encryption.md"],
+    "related": ["enboxorg/dwn-spec#64", "enboxorg/enbox-rust-core#191", "enboxorg/enbox-rust-core#241"]
+  }
+]
