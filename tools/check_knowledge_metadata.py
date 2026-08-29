@@ -135,6 +135,7 @@ check_guide_dir("builders", "builders")
 check_guide_dir("examples", "examples")
 check_guide_dir("implementation", "implementation")
 check_guide_dir("conformance", "conformance")
+check_guide_dir("agents", "agents")
 check_invariants()
 
 for warning in warnings:
