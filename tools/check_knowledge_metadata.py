@@ -43,6 +43,23 @@ def check_date(path: Path, key: str, value: str) -> None:
         warnings.append(f"{path}: {key} is {age} days old; consider source review")
 
 
+def check_guide_dir(dirname: str, domain: str) -> None:
+    directory = ROOT / dirname
+    if not directory.exists():
+        return
+    for path in sorted(directory.glob("*.md")):
+        meta = parse_front_matter(path)
+        for key in ("domain", "kind", "reviewed"):
+            if not meta.get(key):
+                errors.append(f"{path}: missing front-matter field {key}")
+        if meta.get("domain") and meta["domain"] != domain:
+            errors.append(f"{path}: domain must be {domain}")
+        if meta.get("kind") and meta["kind"] != "guide":
+            errors.append(f"{path}: kind must be guide")
+        if meta.get("reviewed"):
+            check_date(path, "reviewed", meta["reviewed"])
+
+
 for path in sorted((ROOT / "dwn").glob("*.md")):
     meta = parse_front_matter(path)
     for key in ("domain", "kind", "spec", "spec-reviewed"):
@@ -72,19 +89,9 @@ for path in sorted((ROOT / "enbox").glob("*.md")):
     if meta.get("reviewed"):
         check_date(path, "reviewed", meta["reviewed"])
 
-for path in sorted((ROOT / "builders").glob("*.md")):
-    if path.name == "README.md":
-        continue
-    meta = parse_front_matter(path)
-    for key in ("domain", "kind", "reviewed"):
-        if not meta.get(key):
-            errors.append(f"{path}: missing front-matter field {key}")
-    if meta.get("domain") and meta["domain"] != "builders":
-        errors.append(f"{path}: domain must be builders")
-    if meta.get("kind") and meta["kind"] != "guide":
-        errors.append(f"{path}: kind must be guide")
-    if meta.get("reviewed"):
-        check_date(path, "reviewed", meta["reviewed"])
+check_guide_dir("builders", "builders")
+check_guide_dir("implementation", "implementation")
+check_guide_dir("conformance", "conformance")
 
 for warning in warnings:
     print(f"WARNING: {warning}")
