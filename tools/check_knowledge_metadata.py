@@ -72,6 +72,20 @@ for path in sorted((ROOT / "enbox").glob("*.md")):
     if meta.get("reviewed"):
         check_date(path, "reviewed", meta["reviewed"])
 
+for path in sorted((ROOT / "builders").glob("*.md")):
+    if path.name == "README.md":
+        continue
+    meta = parse_front_matter(path)
+    for key in ("domain", "kind", "reviewed"):
+        if not meta.get(key):
+            errors.append(f"{path}: missing front-matter field {key}")
+    if meta.get("domain") and meta["domain"] != "builders":
+        errors.append(f"{path}: domain must be builders")
+    if meta.get("kind") and meta["kind"] != "guide":
+        errors.append(f"{path}: kind must be guide")
+    if meta.get("reviewed"):
+        check_date(path, "reviewed", meta["reviewed"])
+
 for warning in warnings:
     print(f"WARNING: {warning}")
 for error in errors:
