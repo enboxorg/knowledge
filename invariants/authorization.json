@@ -1,0 +1,44 @@
+[
+  {
+    "id": "DWN-AUTH-001",
+    "statement": "Cryptographic Signer identity and semantic Author identity are distinct concepts.",
+    "contract": "normative",
+    "sources": ["dwn/authorization.md", "dwn/foundations.md"],
+    "related": ["implementation/authorization-evaluation.md"]
+  },
+  {
+    "id": "DWN-AUTH-002",
+    "statement": "Valid author delegation may cause an operation signed by a delegate to be evaluated semantically as authored by the grantor.",
+    "contract": "normative",
+    "sources": ["dwn/authorization.md"],
+    "related": ["conformance/protocols-and-authorization.md"]
+  },
+  {
+    "id": "DWN-AUTH-003",
+    "statement": "A direct Permission Grant authorizes the grantee acting as itself; it does not by itself rewrite the semantic Author to the grantor.",
+    "contract": "normative",
+    "sources": ["dwn/authorization.md", "dwn/permissions.md"],
+    "related": ["builders/sharing-and-delegation.md"]
+  },
+  {
+    "id": "DWN-AUTH-004",
+    "statement": "Historical authorization is evaluated against the authority state relevant to the signed operation time; a later grant revocation does not automatically invalidate an operation that was authorized earlier.",
+    "contract": "normative",
+    "sources": ["dwn/authorization.md", "dwn/permissions.md"],
+    "related": ["conformance/permissions.md"]
+  },
+  {
+    "id": "DWN-AUTH-005",
+    "statement": "Continuing disclosure mechanisms may require current authorization even when historical admission remains valid.",
+    "contract": "normative",
+    "sources": ["dwn/authorization.md", "dwn/queries-and-sync.md"],
+    "related": ["conformance/queries-and-visibility.md"]
+  },
+  {
+    "id": "DWN-AUTH-006",
+    "statement": "Replicated, forwarded, or replayed messages must pass normal destination admission and authorization; provenance from another DWN is not an authorization bypass.",
+    "contract": "implementation-contract",
+    "sources": ["dwn/distributed-semantics.md", "decisions/0003-unified-admission.md"],
+    "related": ["implementation/message-processing-pipeline.md", "conformance/replication.md"]
+  }
+]

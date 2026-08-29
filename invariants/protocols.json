@@ -1,0 +1,44 @@
+[
+  {
+    "id": "DWN-PROTO-001",
+    "statement": "A protocol definition constrains both Record structure and authorization semantics for Records that declare its protocol URI.",
+    "contract": "normative",
+    "sources": ["dwn/protocols.md"],
+    "related": ["builders/designing-a-protocol.md"]
+  },
+  {
+    "id": "DWN-PROTO-002",
+    "statement": "Protocol role authority is contextual; possessing a role outside the relevant protocol context must not authorize unrelated Records.",
+    "contract": "normative",
+    "sources": ["dwn/protocols.md", "dwn/authorization.md"],
+    "related": ["conformance/protocols-and-authorization.md"]
+  },
+  {
+    "id": "DWN-PROTO-003",
+    "statement": "Protocol authorization evaluates the effective semantic Author, not merely the cryptographic Signer.",
+    "contract": "normative",
+    "sources": ["dwn/protocols.md", "dwn/authorization.md"],
+    "related": ["invariants/authorization.json"]
+  },
+  {
+    "id": "DWN-PROTO-004",
+    "statement": "Historical Records must be evaluated against the governing protocol configuration for the relevant Record time, not blindly against the newest configuration.",
+    "contract": "normative",
+    "sources": ["dwn/protocols.md"],
+    "related": ["implementation/dependency-resolution.md", "conformance/protocols-and-authorization.md"]
+  },
+  {
+    "id": "DWN-PROTO-005",
+    "statement": "Cross-protocol composition introduces dependency edges that must be resolved according to the referenced protocol/context rather than assumed to be local to the current protocol.",
+    "contract": "normative",
+    "sources": ["dwn/protocols.md"],
+    "related": ["implementation/dependency-resolution.md"]
+  },
+  {
+    "id": "DWN-PROTO-006",
+    "statement": "Protocol authorization to read and possession of decryption material are separate capabilities.",
+    "contract": "normative",
+    "sources": ["dwn/protocols.md", "dwn/encryption.md"],
+    "related": ["invariants/identity-encryption.json"]
+  }
+]
