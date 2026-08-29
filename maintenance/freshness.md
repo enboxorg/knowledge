@@ -9,10 +9,11 @@ Every substantive knowledge page belongs to one of these classes:
 - **normative** — derived from the DWN draft/spec.
 - **implementation** — derived from current Enbox code and behavior.
 - **guide** — practical synthesis for builders or DWN engine authors, grounded in normative and implementation knowledge.
+- **worked example** — an end-to-end design applying guide material to one explicit actor/authority model.
 - **conformance guide** — behavior-oriented checklist material used to design tests; still subordinate to the targeted normative/implementation contract.
 - **decision** — an accepted architecture decision.
 
-Do not merge those classes into one source of truth. Guide/checklist content is intentionally non-normative: if it conflicts with `dwn/` semantics or a documented implementation fact, the guide/checklist must be corrected.
+Do not merge those classes into one source of truth. Guide/example/checklist content is intentionally non-normative: if it conflicts with `dwn/` semantics or a documented implementation fact, it must be corrected.
 
 ## Required metadata
 
@@ -57,6 +58,20 @@ reviewed: YYYY-MM-DD
 ---
 ```
 
+### Worked examples
+
+Substantive pages under `examples/` use:
+
+```yaml
+---
+domain: examples
+kind: guide
+reviewed: YYYY-MM-DD
+---
+```
+
+Examples should identify their actor/authority assumptions and distinguish illustrative protocol JSON from normative syntax. Review them when any underlying DWN semantic, Enbox behavior, or builder recommendation they rely on changes.
+
 ### DWN implementation guides
 
 Pages under `implementation/` use:
@@ -96,7 +111,7 @@ Review affected pages when:
 3. a linked parity/divergence issue closes because behaviour changed;
 4. a PR changes Records ordering/retention, authorization, permissions, encryption, sync, topology, durable storage, dependency classification, or error semantics;
 5. an implementation removes/replaces architecture named by a page;
-6. a builder, implementation, or conformance guide relies on an affected assumption.
+6. a builder, example, implementation, or conformance guide relies on an affected assumption.
 
 Update dates/baselines only after actually reviewing the source.
 
@@ -108,7 +123,7 @@ Old review dates should trigger rechecking before high-impact implementation or 
 
 A behaviour-changing Enbox PR should either update the affected knowledge, open/link a focused follow-up, or explicitly state why documented knowledge is unaffected.
 
-A spec change that alters observable behavior should similarly trigger review of `dwn/`, `builders/`, `implementation/`, and `conformance/` pages that depend on it.
+A spec change that alters observable behavior should similarly trigger review of `dwn/`, `builders/`, `examples/`, `implementation/`, and `conformance/` pages that depend on it.
 
 ## Rebaseline procedure
 
@@ -120,4 +135,4 @@ When adopting a new TypeScript Enbox parity baseline:
 4. update `upstream-baseline` and `reviewed` only after verification;
 5. link new divergences to focused issues;
 6. do not edit `dwn/` merely to match TypeScript if the draft did not change;
-7. review affected builder/implementation/conformance guidance.
+7. review affected builder/example/implementation/conformance guidance.
