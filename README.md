@@ -2,7 +2,7 @@
 
 Curated engineering knowledge for Decentralized Web Nodes (DWNs), the Enbox implementation, DWN engine authors, and applications built on top of DWNs.
 
-This repository separates nine kinds of knowledge:
+This repository separates ten kinds of knowledge:
 
 1. **DWN model** — spec-derived semantics and invariants.
 2. **Enbox implementation** — how current Enbox realizes those semantics in TypeScript and Rust.
@@ -12,7 +12,8 @@ This repository separates nine kinds of knowledge:
 6. **Worked examples** — complete protocol/application designs that apply the builder process end-to-end.
 7. **Implementation guides** — engine-level contracts independent of one language/storage design.
 8. **Conformance checklists** — observable behaviours suitable for cross-implementation testing.
-9. **Decisions** — architecture decisions and intentional divergences.
+9. **Agent workflows** — tool-neutral playbooks for contract discovery, implementation, and semantic review.
+10. **Decisions** — architecture decisions and intentional divergences.
 
 ## Structure
 
@@ -25,6 +26,7 @@ builders/        practical guidance for designing applications and protocols
 examples/        fully worked protocol/application designs
 implementation/  engine-author contracts and implementation boundaries
 conformance/     behavior-oriented conformance checklists
+agents/          tool-neutral AI engineering workflows and task templates
 decisions/       ADR-style decisions and intentional divergences
 maintenance/     freshness and provenance policy
 ```
@@ -38,6 +40,7 @@ Start with:
 - [`examples/README.md`](examples/README.md) for end-to-end worked designs
 - [`implementation/README.md`](implementation/README.md) when implementing a DWN engine
 - [`conformance/README.md`](conformance/README.md) when building test/compatibility suites
+- [`agents/README.md`](agents/README.md) for AI-assisted engineering workflows
 - [`AGENTS.md`](AGENTS.md) for coding-agent guidance
 - [`glossary.md`](glossary.md) for terminology
 
@@ -51,7 +54,7 @@ For implementation work, keep these distinct:
 
 Where current TypeScript intentionally differs from the draft, Rust parity work follows the documented upstream behaviour and links the relevant spec issue.
 
-Learning, invariant summaries, builder/example/implementation/conformance guides are aids to reasoning, not independent protocol authority. Every invariant records its contract class so Enbox parity behaviour is not silently promoted to normative DWN behaviour.
+Learning, invariant summaries, builder/example/implementation/conformance guides, and agent workflows are aids to reasoning, not independent protocol authority. Every invariant records its contract class so Enbox parity behaviour is not silently promoted to normative DWN behaviour.
 
 ## Maintenance
 
