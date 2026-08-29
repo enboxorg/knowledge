@@ -8,10 +8,11 @@ Every substantive knowledge page belongs to one of these classes:
 
 - **normative** — derived from the DWN draft/spec.
 - **implementation** — derived from current Enbox code and behavior.
-- **guide** — practical synthesis for application/protocol builders, grounded in normative and implementation knowledge.
+- **guide** — practical synthesis for builders or DWN engine authors, grounded in normative and implementation knowledge.
+- **conformance guide** — behavior-oriented checklist material used to design tests; still subordinate to the targeted normative/implementation contract.
 - **decision** — an accepted architecture decision.
 
-Do not merge those classes into one source of truth. Guide content is intentionally non-normative: if it conflicts with `dwn/` semantics or a documented implementation fact, the guide must be corrected.
+Do not merge those classes into one source of truth. Guide/checklist content is intentionally non-normative: if it conflicts with `dwn/` semantics or a documented implementation fact, the guide/checklist must be corrected.
 
 ## Required metadata
 
@@ -27,8 +28,6 @@ spec: https://dwn-spec.pages.dev/
 spec-reviewed: YYYY-MM-DD
 ---
 ```
-
-If the page depends on a known unresolved divergence, link the corresponding `enboxorg/dwn-spec` issue in the body.
 
 ### Enbox implementation pages
 
@@ -46,11 +45,9 @@ reviewed: YYYY-MM-DD
 ---
 ```
 
-If a claim is true only for TypeScript or only for Rust, say so explicitly. An open parity issue is not evidence that a behavior is already implemented.
-
 ### Builder guides
 
-Substantive pages under `builders/` must include:
+Pages under `builders/` use:
 
 ```yaml
 ---
@@ -60,49 +57,67 @@ reviewed: YYYY-MM-DD
 ---
 ```
 
-Builder pages should link relevant `dwn/`, `enbox/`, or ADR material rather than re-declaring implementation-specific behavior as universal advice. Review them whenever an underlying semantic or implementation assumption changes.
+### DWN implementation guides
+
+Pages under `implementation/` use:
+
+```yaml
+---
+domain: implementation
+kind: guide
+reviewed: YYYY-MM-DD
+---
+```
+
+### Conformance checklists
+
+Pages under `conformance/` use:
+
+```yaml
+---
+domain: conformance
+kind: guide
+reviewed: YYYY-MM-DD
+---
+```
+
+Conformance pages must state which normative or documented implementation contract they target. When draft and current implementation differ, fixtures/checklists should be labelled accordingly rather than silently combining both behaviours.
 
 ### ADRs
 
-ADRs must include a status and date near the top of the document. If an ADR is superseded, keep the old ADR and link to its replacement rather than rewriting history.
+ADRs must include a status and date near the top. If superseded, retain the historical ADR and link to the replacement.
 
 ## When knowledge must be reviewed
 
-Review the affected pages when any of the following occurs:
+Review affected pages when:
 
 1. the DWN draft changes semantics used by the page;
-2. the pinned/current Enbox TypeScript baseline changes materially;
-3. a linked parity or divergence issue closes because behavior changed;
-4. a PR changes Records ordering/retention, authorization, permissions, encryption, sync, topology, or durable storage semantics;
-5. an implementation removes or replaces an architecture named in the page;
-6. a builder guide relies on an affected semantic or implementation assumption.
+2. the pinned/current TypeScript parity baseline changes materially;
+3. a linked parity/divergence issue closes because behaviour changed;
+4. a PR changes Records ordering/retention, authorization, permissions, encryption, sync, topology, durable storage, dependency classification, or error semantics;
+5. an implementation removes/replaces architecture named by a page;
+6. a builder, implementation, or conformance guide relies on an affected assumption.
 
-A review does not require changing prose if the content remains correct; update the review date/baseline only after actually checking the source.
+Update dates/baselines only after actually reviewing the source.
 
 ## Staleness is a signal, not proof of incorrectness
 
-Review dates are intentionally visible. A page with an old date should be rechecked before being used to make a high-impact implementation or protocol-design decision, but age alone does not mean the page is wrong.
-
-The metadata check may report old review dates as warnings. It should fail only on malformed or missing provenance metadata.
+Old review dates should trigger rechecking before high-impact implementation or protocol-design decisions. Age alone does not prove a page is wrong. Metadata CI should warn on old review dates and fail on missing/malformed provenance.
 
 ## PR rule
 
-A behavior-changing PR in an Enbox repository should do one of the following:
+A behaviour-changing Enbox PR should either update the affected knowledge, open/link a focused follow-up, or explicitly state why documented knowledge is unaffected.
 
-- update the relevant knowledge page in the same change;
-- open a focused knowledge follow-up and link it;
-- state explicitly why the behavior change does not affect documented knowledge.
-
-The goal is to make documentation drift an explicit engineering decision rather than an accidental side effect.
+A spec change that alters observable behavior should similarly trigger review of `dwn/`, `builders/`, `implementation/`, and `conformance/` pages that depend on it.
 
 ## Rebaseline procedure
 
 When adopting a new TypeScript Enbox parity baseline:
 
-1. update code/fixtures and the parity matrix in `enbox-rust-core`;
-2. search `enbox/` pages for the previous baseline SHA;
-3. re-verify each affected implementation claim against the new baseline;
+1. update code/fixtures and parity evidence in `enbox-rust-core`;
+2. find `enbox/` pages pinned to the previous baseline;
+3. re-verify affected implementation claims;
 4. update `upstream-baseline` and `reviewed` only after verification;
-5. link new divergences to focused GitHub issues;
-6. do not edit `dwn/` pages merely to match TypeScript if the draft itself did not change;
-7. review builder guides whose recommendations depend on changed behavior.
+5. link new divergences to focused issues;
+6. do not edit `dwn/` merely to match TypeScript if the draft did not change;
+7. review affected builder/implementation/conformance guidance.
