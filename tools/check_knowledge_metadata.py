@@ -3,12 +3,14 @@ from __future__ import annotations
 
 from datetime import date, datetime
 from pathlib import Path
+import json
 import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
+ALLOWED_INVARIANT_CONTRACTS = {"normative", "enbox-parity", "implementation-contract"}
 
 errors: list[str] = []
 warnings: list[str] = []
@@ -62,6 +64,43 @@ def check_guide_dir(dirname: str, domain: str) -> None:
             check_date(path, "reviewed", meta["reviewed"])
 
 
+def check_invariants() -> None:
+    directory = ROOT / "invariants"
+    if not directory.exists():
+        return
+    seen_ids: dict[str, Path] = {}
+    for path in sorted(directory.glob("*.json")):
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            errors.append(f"{path}: invalid JSON: {exc}")
+            continue
+        if not isinstance(payload, list):
+            errors.append(f"{path}: top-level invariant document must be an array")
+            continue
+        for index, item in enumerate(payload):
+            prefix = f"{path}[{index}]"
+            if not isinstance(item, dict):
+                errors.append(f"{prefix}: invariant must be an object")
+                continue
+            invariant_id = item.get("id")
+            statement = item.get("statement")
+            contract = item.get("contract")
+            sources = item.get("sources")
+            if not isinstance(invariant_id, str) or not invariant_id.strip():
+                errors.append(f"{prefix}: missing non-empty id")
+            elif invariant_id in seen_ids:
+                errors.append(f"{prefix}: duplicate id {invariant_id}; first seen in {seen_ids[invariant_id]}")
+            else:
+                seen_ids[invariant_id] = path
+            if not isinstance(statement, str) or not statement.strip():
+                errors.append(f"{prefix}: missing non-empty statement")
+            if contract not in ALLOWED_INVARIANT_CONTRACTS:
+                errors.append(f"{prefix}: contract must be one of {sorted(ALLOWED_INVARIANT_CONTRACTS)}")
+            if not isinstance(sources, list) or not sources or not all(isinstance(source, str) and source.strip() for source in sources):
+                errors.append(f"{prefix}: sources must be a non-empty list of strings")
+
+
 for path in sorted((ROOT / "dwn").glob("*.md")):
     meta = parse_front_matter(path)
     for key in ("domain", "kind", "spec", "spec-reviewed"):
@@ -91,10 +130,12 @@ for path in sorted((ROOT / "enbox").glob("*.md")):
     if meta.get("reviewed"):
         check_date(path, "reviewed", meta["reviewed"])
 
+check_guide_dir("learning", "learning")
 check_guide_dir("builders", "builders")
 check_guide_dir("examples", "examples")
 check_guide_dir("implementation", "implementation")
 check_guide_dir("conformance", "conformance")
+check_invariants()
 
 for warning in warnings:
     print(f"WARNING: {warning}")
