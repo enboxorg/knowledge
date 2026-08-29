@@ -1,0 +1,51 @@
+[
+  {
+    "id": "DWN-SYNC-001",
+    "statement": "Replication is eventual convergence over signed messages; it is not a trusted database-copy channel or a global consensus log.",
+    "contract": "implementation-contract",
+    "sources": ["dwn/distributed-semantics.md", "dwn/queries-and-sync.md"],
+    "related": ["implementation/replication-contract.md"]
+  },
+  {
+    "id": "DWN-SYNC-002",
+    "statement": "A destination DWN independently validates replicated messages through normal admission.",
+    "contract": "implementation-contract",
+    "sources": ["dwn/distributed-semantics.md", "decisions/0003-unified-admission.md"],
+    "related": ["conformance/replication.md"]
+  },
+  {
+    "id": "DWN-SYNC-003",
+    "statement": "Missing dependencies must be distinguishable from permanently invalid messages so replication can repair and retry correctly.",
+    "contract": "implementation-contract",
+    "sources": ["dwn/queries-and-sync.md", "implementation/dependency-resolution.md", "implementation/error-model.md"],
+    "related": ["conformance/replication.md"]
+  },
+  {
+    "id": "DWN-SYNC-004",
+    "statement": "A source progress token is a source-local cursor, not a causal clock or global transaction order.",
+    "contract": "normative",
+    "sources": ["dwn/queries-and-sync.md"],
+    "related": ["implementation/replication-contract.md"]
+  },
+  {
+    "id": "DWN-SYNC-005",
+    "statement": "Sync orchestration must not advance durable progress beyond work whose required admission and dependency processing is settled.",
+    "contract": "implementation-contract",
+    "sources": ["dwn/queries-and-sync.md", "implementation/replication-contract.md"],
+    "related": ["conformance/replication.md"]
+  },
+  {
+    "id": "ENBOX-SYNC-001",
+    "statement": "Current Enbox durable replication uses MessagesQuery for durable pull, MessagesSubscribe as a wake/latency layer, and MessagesRead for exact retrieval and dependency/data fetches.",
+    "contract": "enbox-parity",
+    "sources": ["enbox/sync.md", "dwn/queries-and-sync.md"],
+    "related": ["decisions/0002-durable-feed-replication.md", "enboxorg/enbox-rust-core#188", "enboxorg/enbox-rust-core#192"]
+  },
+  {
+    "id": "ENBOX-SYNC-002",
+    "statement": "Legacy MessagesSync, StateIndex, and SMT reconciliation are not the current Enbox sync architecture or parity target.",
+    "contract": "enbox-parity",
+    "sources": ["enbox/sync.md", "AGENTS.md"],
+    "related": ["enboxorg/enbox-rust-core#211"]
+  }
+]
