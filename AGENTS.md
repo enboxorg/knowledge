@@ -2,6 +2,16 @@
 
 Guidance for coding agents working on Enbox and DWN-related code.
 
+## Canonical engineering workflows
+
+For non-trivial semantic work, use the tool-neutral workflows under `agents/`:
+
+- `agents/contract-discovery.md` before changing behaviour;
+- `agents/implement-contract.md` after the Behavioural Contract Packet is approved;
+- `agents/review-change.md` for independent semantic review.
+
+Tool-specific Claude/Codex/OpenCode wrappers should invoke these playbooks rather than duplicating their logic.
+
 ## Before changing DWN behaviour
 
 1. Read the relevant `dwn/` page for the semantic invariant.
@@ -51,4 +61,4 @@ For application/protocol design, also review the actor matrix, role lifecycle, m
 
 ## Knowledge maintenance
 
-When semantics or implementation behaviour changes, update or explicitly review affected `dwn/`, `enbox/`, `learning/`, `invariants/`, `builders/`, `examples/`, `implementation/`, and `conformance/` material. Never present implementation behaviour as normative merely because it has an invariant ID.
+When semantics or implementation behaviour changes, update or explicitly review affected `dwn/`, `enbox/`, `learning/`, `invariants/`, `builders/`, `examples/`, `implementation/`, `conformance/`, and `agents/` material. Never present implementation behaviour as normative merely because it has an invariant ID.
