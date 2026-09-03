@@ -1,7 +1,7 @@
 ---
 domain: conformance
 kind: guide
-reviewed: 2026-08-28
+reviewed: 2026-09-03
 ---
 
 # Permissions Conformance
@@ -30,6 +30,8 @@ Use with `dwn/permissions.md` and `dwn/authorization.md`.
 
 ## Negative cases
 
+- [ ] Permission request, grant, and revocation Records are immutable after their initial write (`ENBOX-REC-002`).
+- [ ] Direct and replicated update attempts preserve the same structured immutable-record code (`ENBOX-ERR-001`).
 - [ ] Wrong grantee is rejected.
 - [ ] Wrong method/interface is rejected.
 - [ ] Wrong protocol/context is rejected.

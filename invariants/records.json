@@ -29,7 +29,7 @@
   },
   {
     "id": "ENBOX-REC-001",
-    "statement": "In the current Enbox convergence model, a terminal delete dominates stale competing writes and prevents resurrection regardless of delivery order.",
+    "statement": "In the current Enbox convergence model, Records winners use the class order prune delete above plain delete above write, then canonical message timestamp/CID ordering within a class; a winning delete prevents resurrection regardless of delivery order.",
     "contract": "enbox-parity",
     "sources": ["dwn/records.md", "enbox/records.md"],
     "related": ["enboxorg/enbox-rust-core#189", "conformance/records.md"]
@@ -47,5 +47,19 @@
     "contract": "implementation-contract",
     "sources": ["implementation/storage-contracts.md", "decisions/0004-store-owned-record-transitions.md"],
     "related": ["enboxorg/enbox-rust-core#169", "enboxorg/enbox-rust-core#189"]
+  },
+  {
+    "id": "DWN-REC-007",
+    "statement": "Replacing the stored representation or query projection of an already-retained message CID must preserve that CID's durable feed identity and must not create a second feed membership contribution.",
+    "contract": "implementation-contract",
+    "sources": ["implementation/storage-contracts.md", "enbox/storage.md"],
+    "related": ["conformance/records.md", "conformance/replication.md", "enboxorg/enbox-rust-core#189"]
+  },
+  {
+    "id": "ENBOX-REC-002",
+    "statement": "Current Enbox permission request, grant, and revocation Records are immutable after their initial write; amendment uses a distinct Record or the defined revoke-and-reissue lifecycle.",
+    "contract": "enbox-parity",
+    "sources": ["enbox/records.md", "dwn/permissions.md"],
+    "related": ["conformance/permissions.md", "enboxorg/enbox-rust-core#189"]
   }
 ]
