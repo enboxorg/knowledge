@@ -1,7 +1,7 @@
 ---
 domain: implementation
 kind: guide
-reviewed: 2026-08-28
+reviewed: 2026-09-03
 ---
 
 # Error Model
@@ -29,6 +29,8 @@ Errors should be:
 - specific enough to identify the failed semantic stage,
 - safe to expose without leaking sensitive authorization state unnecessarily,
 - independent of incidental database exception strings.
+
+For covered current-Enbox parity failures, the public boundary carries a structured error code plus optional structured information (`ENBOX-ERR-001`). Internal code should use typed errors/outcomes and perform the status/wire mapping once at the boundary. Unknown storage or implementation errors remain internal/transient failures; they must not be converted into client validation errors by string matching.
 
 ## Replication implications
 

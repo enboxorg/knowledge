@@ -7,7 +7,7 @@
 
 Records admission decides which retained messages represent current logical state. If the handler performs message insertion, latest-state index mutation, feed emission, and displaced-message cleanup as independent writes, readers or a crash can observe an impossible intermediate state.
 
-Current TypeScript Enbox addresses this by handing the complete latest-state transition to storage as one operation. Rust still has parity work in this area.
+Current TypeScript Enbox addresses this by handing the complete latest-state transition to storage as one operation. Rust implemented this decision for Records and ProtocolsConfigure under `enbox-rust-core#189`; remaining work should test and preserve the decision rather than reintroducing independently committed handler mutations.
 
 ## Decision
 

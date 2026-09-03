@@ -62,7 +62,7 @@ Replication feeds messages back through the same admission semantics rather than
 
 The most important remaining Rust work is concentrated in distributed invariants rather than basic type coverage:
 
-- deterministic delete-wins Records convergence and atomic latest-state transitions (`enbox-rust-core#189`),
+- conformance evidence and follow-through for the implemented delete-wins Records and atomic latest-state contract (`enbox-rust-core#189`),
 - one consistent Records visibility model (`#190`),
 - durable-feed replication using `MessagesQuery` and `MessagesSubscribe` (`#187`, `#188`, `#192`),
 - current encryption-control/key-delivery lifecycle (`#191`),

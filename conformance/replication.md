@@ -1,7 +1,7 @@
 ---
 domain: conformance
 kind: guide
-reviewed: 2026-08-28
+reviewed: 2026-09-03
 ---
 
 # Replication Conformance
@@ -20,7 +20,9 @@ Use with `dwn/queries-and-sync.md`, `dwn/distributed-semantics.md`, and `impleme
 - [ ] Replicated messages pass ordinary DWN admission.
 - [ ] Replication does not bypass protocol, permission, integrity, or state checks.
 - [ ] Destination duplicate detection is idempotent.
+- [ ] Exact retained-CID replay remains duplicate after mutable protocol/role state changes; an unseen historical CID still receives ordinary admission.
 - [ ] Permanent rejection is distinguishable from repairable incomplete state.
+- [ ] Structured admission error codes map consistently to applied, duplicate, superseded, incomplete, invalid, or deferred outcomes (`ENBOX-ERR-001`).
 
 ## Dependency repair
 
@@ -31,6 +33,7 @@ Use with `dwn/queries-and-sync.md`, `dwn/distributed-semantics.md`, and `impleme
 ## Convergence
 
 - [ ] Same admissible message set delivered in different orders converges.
+- [ ] Cross-runtime fixtures compare winner CID, retained CID set, and normalized durable-feed membership rather than backend-local numeric positions.
 - [ ] Bidirectional replication converges without endless echo.
 - [ ] Reconnect from stale progress catches up fully.
 - [ ] Crash/reopen preserves committed progress and does not skip accepted feed items.

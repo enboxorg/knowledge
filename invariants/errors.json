@@ -1,0 +1,9 @@
+[
+  {
+    "id": "ENBOX-ERR-001",
+    "statement": "For covered current-Enbox admission failures, public replies preserve a stable structured error code and associated information independently of incidental internal or storage error strings.",
+    "contract": "enbox-parity",
+    "sources": ["implementation/error-model.md", "enbox/records.md"],
+    "related": ["conformance/records.md", "conformance/replication.md", "enboxorg/enbox-rust-core#189", "enboxorg/enbox-rust-core#251"]
+  }
+]

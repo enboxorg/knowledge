@@ -21,6 +21,7 @@ An `enbox-parity` invariant must not be silently promoted to normative DWN behav
 ## Files
 
 - `records.json`
+- `errors.json`
 - `authorization.json`
 - `protocols.json`
 - `sync.json`

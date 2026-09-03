@@ -5,7 +5,7 @@ repositories:
   - enboxorg/enbox
   - enboxorg/enbox-rust-core
 upstream-baseline: c63bf424ac0997583db825e8a5fddf1507d30c40
-reviewed: 2026-08-28
+reviewed: 2026-09-03
 related-issues:
   - enbox-rust-core#189
   - enbox-rust-core#190
@@ -42,9 +42,15 @@ store commits the transition atomically
 
 not a sequence of independently visible mutations.
 
-## Convergence gap
+## Convergent winner lattice
 
-Current Rust still needs the TypeScript delete-wins tombstone lattice. Generic timestamp/CID ordering is insufficient because a later-arriving older delete can lose on one replica while a write arriving after a delete is rejected on another.
+Current TypeScript and Rust use the same delete-wins Records lattice:
+
+1. prune delete;
+2. plain delete;
+3. write.
+
+Within one class, canonical message timestamp and then message CID determine the winner. A winning delete is terminal, so neither stale nor newer writes resurrect the Record. This is current-Enbox parity (`ENBOX-REC-001`), not a claim that the stronger class ordering is normative DWN draft behaviour.
 
 The required invariant is:
 
@@ -56,6 +62,8 @@ same valid message set
 
 Tracked by `enbox-rust-core#189`.
 
+Rust implemented this ordering and store-owned atomic latest-state transitions under `enbox-rust-core#189`.
+
 ## Visibility gap
 
 Physical retained state and application-visible state are separate concerns. Current TypeScript routes Records Read/Query/Count/Subscribe through a shared visibility model including read-time record limits, context boundaries, published selection and initial-write attachment. Rust alignment is tracked by `#190`.
@@ -63,6 +71,16 @@ Physical retained state and application-visible state are separate concerns. Cur
 ## Exact replay
 
 Current TypeScript recognizes an already-retained exact message CID before mutable admission state can reject historical replay. This matters for protocol-role and other mutable authorization context. Historical grant revocation is different: grant authorization evaluates against the signed message time and is not retroactively revoked.
+
+A replay newly carrying `encodedData` or a data stream remains an exact-CID duplicate: it does not complete the retained operation, rerun mutable admission, or change latest state. An initial write admitted without data therefore remains incomplete through exact replay.
+
+Separately, an authorized internal store-level replacement of an existing CID's representation or indexes preserves its durable feed identity and membership contribution (`DWN-REC-007`). It does not allocate a second logical feed event.
+
+## Permission Records and failures
+
+The built-in permissions protocol makes permission request, grant, and revocation Records immutable after their initial write (`ENBOX-REC-002`). A changed permission is represented by a distinct Record or the defined revocation/reissue lifecycle.
+
+Covered admission failures expose current-Enbox structured error codes and associated information at the public reply boundary (`ENBOX-ERR-001`). Storage and unexpected internal failures remain internal classes rather than being relabeled as client validation errors.
 
 ## Attestation
 
