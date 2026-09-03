@@ -15,7 +15,8 @@ Use with `dwn/records.md` and `dwn/distributed-semantics.md`.
 - [ ] `dataCid` / data-size commitments are verified.
 - [ ] Descriptor and authorization payload commitments are verified before admission.
 - [ ] Exact duplicate delivery is idempotent.
-- [ ] Same-CID data/index completion preserves durable feed identity and fingerprint membership (`DWN-REC-007`).
+- [ ] A data-bearing replay of an already-retained CID remains a non-mutating duplicate, including after a newer write or delete; it cannot complete data or change latest state.
+- [ ] Internal same-CID data/index replacement, where separately authorized, preserves durable feed identity and fingerprint membership (`DWN-REC-007`).
 
 ## Lifecycle
 

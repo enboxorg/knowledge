@@ -72,7 +72,9 @@ Physical retained state and application-visible state are separate concerns. Cur
 
 Current TypeScript recognizes an already-retained exact message CID before mutable admission state can reject historical replay. This matters for protocol-role and other mutable authorization context. Historical grant revocation is different: grant authorization evaluates against the signed message time and is not retroactively revoked.
 
-Replacing the stored representation or indexes of that exact CID—for example, completing an initial write with data—preserves its durable feed identity and membership contribution (`DWN-REC-007`). It does not allocate a second logical feed event.
+A replay newly carrying `encodedData` or a data stream remains an exact-CID duplicate: it does not complete the retained operation, rerun mutable admission, or change latest state. An initial write admitted without data therefore remains incomplete through exact replay.
+
+Separately, an authorized internal store-level replacement of an existing CID's representation or indexes preserves its durable feed identity and membership contribution (`DWN-REC-007`). It does not allocate a second logical feed event.
 
 ## Permission Records and failures
 

@@ -56,6 +56,7 @@ At minimum test:
 - plain-delete versus prune in both arrival orders,
 - equal-time CID ties within each winner class,
 - duplicate initial/write/update/delete delivery,
+- data-bearing replay of a retained initial write before and after a newer write/delete,
 - duplicate delivery after mutable protocol/role state changes,
 - delete followed by stale and newer writes,
 - cleanup failure and stale resumable-task replay,
