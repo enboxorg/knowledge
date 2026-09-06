@@ -19,6 +19,7 @@ Prefer focused ADR-style documents over broad design essays.
 - [ADR 0002: Durable Message Feed Is the Authoritative Replication Substrate](0002-durable-feed-replication.md)
 - [ADR 0003: Replication Reuses Normal DWN Admission](0003-unified-admission.md)
 - [ADR 0004: Latest Record State Transitions Are Store-Owned and Atomic](0004-store-owned-record-transitions.md)
+- [ADR 0005: Read-Time Record-Limit Occupancy Follows Current Enbox Parity](0005-read-time-record-limit-occupancy.md)
 
 ## Lifecycle
 
