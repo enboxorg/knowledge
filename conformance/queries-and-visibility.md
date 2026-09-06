@@ -22,11 +22,14 @@ Use with `dwn/queries-and-sync.md`, `dwn/records.md`, and `dwn/protocols.md`.
 - [ ] Query authorization is evaluated independently from write admission.
 - [ ] Unauthorized callers cannot infer hidden Records through counts, pagination gaps, errors, or timing-sensitive existence checks beyond the allowed contract.
 - [ ] Live subscriptions re-evaluate continuing disclosure authority where required.
+- [ ] Live subscription delivery rechecks mutable grant/role authority and occupant status; terminal failures close the stream with a defined error.
 
 ## Unified visibility
 
 - [ ] Read, Query, Count, and Subscribe apply the same visibility/occupancy semantics when they expose the same logical Record population.
 - [ ] Any record-limit behaviour is exercised consistently across those surfaces for the targeted spec/upstream contract.
+- [ ] Occupancy winners are deterministic per protocol path and direct-parent group (`dateCreated`, then `recordId`), independent of insertion and replication order.
+- [ ] Nested `contextId` selections cannot escape the authorized context boundary (`a/b` never matches `a/bc`).
 
 ## Stability
 

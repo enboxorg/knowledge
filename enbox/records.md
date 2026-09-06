@@ -58,7 +58,17 @@ Tracked by `enbox-rust-core#189`.
 
 ## Visibility gap
 
-Physical retained state and application-visible state are separate concerns. Current TypeScript routes Records Read/Query/Count/Subscribe through a shared visibility model including read-time record limits, context boundaries, published selection and initial-write attachment. Rust alignment is tracked by `#190`.
+Physical retained state and application-visible state are separate concerns. Current TypeScript routes Records Read/Query/Count/Subscribe through a shared visibility model including read-time record limits, context boundaries, published selection and initial-write attachment. Rust alignment landed under `enbox-rust-core#190` (PR #262) and is pinned by `ENBOX-REC-002` and `DWN-REC-007`.
+
+### Read-time record-limit occupancy (`ENBOX-REC-002`)
+
+For one concrete protocol path, matching latest live writes partition by direct-parent group (records without a parent form the root group; an explicitly selected parent list spans only those groups). Each group ranks by `dateCreated` ascending then `recordId` ascending and admits the first `max` before caller filters, sort, and pagination; counts run over the same admitted set. Message CID and update timestamps do not participate. A missing protocol definition or absent rule means no restriction; any other resolution or projection failure is an error, never unrestricted visibility.
+
+This is explicitly *not* the draft's admission-time `reject`/`purgeOldest` strategy; see `decisions/0005-read-time-record-limit-occupancy.md` for the recorded divergence.
+
+### Nested-scope selection
+
+`protocolPath` matches exactly. `contextId = X` matches only `X` or `X + "/" + suffix`, never a sibling sharing a lexical prefix. Collection filters over a nested protocol path must pin a direct parent (`parentId`), the target path, or an ancestor context; only an explicitly bounded Subscribe initial page may omit that scope. Outstanding `$recordLimit` policy derivation follows the same scoping: root paths carry no scope, `parentId` passes through, and a `contextId` at target depth contributes its direct parent while deeper selections scope the subtree itself.
 
 ## Exact replay
 

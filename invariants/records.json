@@ -48,4 +48,19 @@
     "sources": ["implementation/storage-contracts.md", "decisions/0004-store-owned-record-transitions.md"],
     "related": ["enboxorg/enbox-rust-core#169", "enboxorg/enbox-rust-core#189"]
   }
+,
+  {
+    "id": "ENBOX-REC-002",
+    "statement": "Read-time $recordLimit occupancy is deterministic per exact protocol path and direct-parent context: each group ranks current latest live Records by dateCreated ascending then recordId ascending and admits the first max before caller filters, sort, and pagination. This is current Enbox behaviour, not the draft's admission-time reject/purgeOldest strategy.",
+    "contract": "enbox-parity",
+    "sources": ["enbox/records.md"],
+    "related": ["enboxorg/enbox-rust-core#190", "conformance/queries-and-visibility.md", "decisions/0005-read-time-record-limit-occupancy.md"]
+  },
+  {
+    "id": "DWN-REC-007",
+    "statement": "RecordsRead, RecordsQuery, RecordsCount, and RecordsSubscribe snapshots resolve equivalent inputs to the same logical Record-ID population at the same durable head; Count counts that projected population.",
+    "contract": "implementation-contract",
+    "sources": ["dwn/records.md", "dwn/queries-and-sync.md"],
+    "related": ["enboxorg/enbox-rust-core#190", "conformance/queries-and-visibility.md"]
+  }
 ]
