@@ -58,7 +58,9 @@ Tracked by `enbox-rust-core#189`.
 
 ## Visibility gap
 
-Physical retained state and application-visible state are separate concerns. Current TypeScript routes Records Read/Query/Count/Subscribe through a shared visibility model including read-time record limits, context boundaries, published selection and initial-write attachment. Rust alignment landed under `enbox-rust-core#190` (PR #262) and is pinned by `ENBOX-REC-002` and `DWN-REC-007`.
+Physical retained state and application-visible state are separate concerns. Query/Count/Subscribe route through a shared visibility model including read-time record limits, context boundaries, published selection and initial-write attachment. Rust alignment landed under `enbox-rust-core#190` (PR #262) and is pinned by `ENBOX-REC-002` and `DWN-REC-007`.
+
+Current TypeScript Read is a known exception: it selects a raw `LIMIT 1` candidate before applying requester visibility and record-limit occupancy, so an ineligible top candidate can shadow an eligible record. This is tracked as `enboxorg/enbox#1665`. Rust deliberately selects the top record from the eligible population under `enbox-rust-core#268`.
 
 ### Read-time record-limit occupancy (`ENBOX-REC-002`)
 

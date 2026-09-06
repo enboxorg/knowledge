@@ -61,6 +61,6 @@
     "statement": "RecordsRead, RecordsQuery, RecordsCount, and RecordsSubscribe snapshots resolve equivalent inputs to the same logical Record-ID population at the same durable head; Count counts that projected population.",
     "contract": "implementation-contract",
     "sources": ["dwn/records.md", "dwn/queries-and-sync.md"],
-    "related": ["enboxorg/enbox-rust-core#190", "conformance/queries-and-visibility.md"]
+    "related": ["enboxorg/enbox-rust-core#190", "enboxorg/enbox-rust-core#268", "enboxorg/enbox#1665", "conformance/queries-and-visibility.md"]
   }
 ]

@@ -13,7 +13,7 @@ Rust implements the current Enbox read-time occupancy model for `enbox-rust-core
 
 ## Consequences
 
-- Over-limit writes admit (202) and stay invisible to Read/Query/Count/Subscribe snapshots until a reconfiguration or squash changes the occupant population.
+- Over-limit writes admit (202) and stay outside the eligible Read/Query/Count/Subscribe snapshot population until a reconfiguration or squash changes occupancy. TypeScript Read currently applies this projection after raw top-1 selection (`enboxorg/enbox#1665`); Rust selects top-1 from the eligible population (`enbox-rust-core#268`).
 - Occupancy policy resolves from the protocol definition governing the signed request timestamp; a missing protocol or absent rule means no restriction, while any other resolution or projection failure is an error.
 - If the draft and Enbox converge later, update the contract/source references deliberately while keeping the stable ID when the statement itself remains equivalent.
 
@@ -25,6 +25,7 @@ Rust implements the current Enbox read-time occupancy model for `enbox-rust-core
 ## Related
 
 - `enbox-rust-core#190` — read-time visibility alignment (PR #262)
+- `enbox-rust-core#268`, `enboxorg/enbox#1665` — eligible-population Read top-1 and tracked TypeScript bug
 - `ENBOX-REC-002`, `DWN-REC-007`
 - `enbox/records.md`, `conformance/queries-and-visibility.md`
 - DWN draft `$recordLimit` (admission-time strategies)
