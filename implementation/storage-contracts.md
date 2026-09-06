@@ -1,7 +1,7 @@
 ---
 domain: implementation
 kind: guide
-reviewed: 2026-08-28
+reviewed: 2026-09-03
 ---
 
 # Storage Contracts
@@ -38,6 +38,10 @@ If a crash can leave the query-visible state newer than the replication feed, re
 ## Durable-feed rule
 
 There should be one authoritative persisted history for replication. Adapters, subscriptions, or event APIs should derive from it rather than introducing an independently committed second history.
+
+Updating an already-retained CID's representation or complete query projection must preserve its existing durable entry identity. It must not allocate another feed position, publish another semantic wake, or add another fingerprint contribution (`DWN-REC-007`). A transition that would move the CID between incompatible fingerprint domains should fail rather than silently rewriting durable history.
+
+Data-blob and destructive descendant cleanup may follow the durable logical transition. Failures must prefer harmless orphaned data or remaining cleanup work over removing data referenced by a live retained write. Retries must recheck the current winner and be idempotent.
 
 ## Testing
 

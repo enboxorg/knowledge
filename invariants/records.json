@@ -29,7 +29,7 @@
   },
   {
     "id": "ENBOX-REC-001",
-    "statement": "In the current Enbox convergence model, a terminal delete dominates stale competing writes and prevents resurrection regardless of delivery order.",
+    "statement": "In the current Enbox convergence model, Records winners use the class order prune delete above plain delete above write, then canonical message timestamp/CID ordering within a class; a winning delete prevents resurrection regardless of delivery order.",
     "contract": "enbox-parity",
     "sources": ["dwn/records.md", "enbox/records.md"],
     "related": ["enboxorg/enbox-rust-core#189", "conformance/records.md"]
@@ -47,17 +47,31 @@
     "contract": "implementation-contract",
     "sources": ["implementation/storage-contracts.md", "decisions/0004-store-owned-record-transitions.md"],
     "related": ["enboxorg/enbox-rust-core#169", "enboxorg/enbox-rust-core#189"]
+  },
+  {
+    "id": "DWN-REC-007",
+    "statement": "Replacing the stored representation or query projection of an already-retained message CID must preserve that CID's durable feed identity and must not create a second feed membership contribution.",
+    "contract": "implementation-contract",
+    "sources": ["implementation/storage-contracts.md", "enbox/storage.md"],
+    "related": ["conformance/records.md", "conformance/replication.md", "enboxorg/enbox-rust-core#189"]
+  },
+  {
+    "id": "ENBOX-REC-002",
+    "statement": "Current Enbox permission request, grant, and revocation Records are immutable after their initial write; amendment uses a distinct Record or the defined revoke-and-reissue lifecycle.",
+    "contract": "enbox-parity",
+    "sources": ["enbox/records.md", "dwn/permissions.md"],
+    "related": ["conformance/permissions.md", "enboxorg/enbox-rust-core#189"]
   }
 ,
   {
-    "id": "ENBOX-REC-002",
+    "id": "ENBOX-REC-003",
     "statement": "Read-time $recordLimit occupancy is deterministic per exact protocol path and direct-parent context: each group ranks current latest live Records by dateCreated ascending then recordId ascending and admits the first max before caller filters, sort, and pagination. This is current Enbox behaviour, not the draft's admission-time reject/purgeOldest strategy.",
     "contract": "enbox-parity",
     "sources": ["enbox/records.md"],
     "related": ["enboxorg/enbox-rust-core#190", "conformance/queries-and-visibility.md", "decisions/0005-read-time-record-limit-occupancy.md"]
   },
   {
-    "id": "DWN-REC-007",
+    "id": "DWN-REC-008",
     "statement": "RecordsRead, RecordsQuery, RecordsCount, and RecordsSubscribe snapshots resolve equivalent inputs to the same logical Record-ID population at the same durable head; Count counts that projected population.",
     "contract": "implementation-contract",
     "sources": ["dwn/records.md", "dwn/queries-and-sync.md"],

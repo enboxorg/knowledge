@@ -5,7 +5,7 @@ repositories:
   - enboxorg/enbox
   - enboxorg/enbox-rust-core
 upstream-baseline: c63bf424ac0997583db825e8a5fddf1507d30c40
-reviewed: 2026-08-28
+reviewed: 2026-09-03
 related-issues:
   - enbox-rust-core#169
   - enbox-rust-core#187
@@ -50,9 +50,11 @@ Do not conflate these concerns:
 
 ## Atomicity boundary
 
-SQLite already gives strong atomicity inside the MessageStore/feed transaction. The remaining Records gap is broader latest-state mutation across the new winner, displaced retained messages and their visible indexes.
+SQLite gives strong atomicity inside the MessageStore/feed transaction. Records latest-state mutation across the new winner, retained/reindexed messages, displaced messages, query projections, and durable feed effects uses one store-owned transition in current Rust and TypeScript.
 
-Current TypeScript represents this as one store-owned latest-state transition. Rust alignment is tracked by `#189`.
+The handler decides validity and transition contents; the store commits those contents atomically. Data and descendant cleanup can follow the durable commit and must be safely resumable.
+
+An update to the stored representation or indexes of an existing CID preserves its feed position and fingerprint membership rather than emitting another durable event (`DWN-REC-007`).
 
 ## Progress model
 

@@ -1,7 +1,7 @@
 ---
 domain: conformance
 kind: guide
-reviewed: 2026-08-28
+reviewed: 2026-09-03
 ---
 
 # Protocols and Authorization Conformance
@@ -30,6 +30,7 @@ Use with `dwn/protocols.md` and `dwn/authorization.md`.
 - [ ] Later grant revocation does not retroactively invalidate earlier valid admission where the contract is historical.
 - [ ] Live/current disclosure paths re-evaluate continuing authority where required.
 - [ ] Exact replay does not accidentally become invalid solely because mutable unrelated authorization state changed after original acceptance, where idempotent replay is the intended contract.
+- [ ] Protocol configuration history is retained and temporal lookup selects the configuration governing the relevant Record time; exactly one canonical newest configuration is indexed latest.
 
 ## Negative cases
 

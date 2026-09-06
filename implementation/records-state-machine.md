@@ -1,7 +1,7 @@
 ---
 domain: implementation
 kind: guide
-reviewed: 2026-08-28
+reviewed: 2026-09-03
 ---
 
 # Records State Machine
@@ -16,6 +16,8 @@ A Record is logical state derived from retained Records messages. Implementation
 - conflict resolution is deterministic across replicas.
 - deletes are terminal tombstones in the current Enbox convergence model; stale or newer writes must not reopen a deleted Record where that model applies.
 - exact duplicate messages are idempotent.
+
+For the current Enbox parity contract, winner classes are ordered `prune delete > plain delete > write`; only candidates within the same class use timestamp/CID ordering (`ENBOX-REC-001`). Keep this classification separate from normative DWN claims.
 
 ## State transition shape
 
@@ -37,12 +39,13 @@ A correct implementation must distinguish message retention from visible logical
 
 For a candidate message:
 
-1. establish the relevant existing Record state,
-2. validate immutable relationships and protocol context,
-3. evaluate authorization,
+1. perform the integrity/authentication work needed to identify the signed operation,
+2. establish the relevant existing Record state and classify an exact retained CID as duplicate before mutable admission is re-evaluated,
+3. for an unseen operation, validate dependencies, immutable relationships, protocol context, and authorization,
 4. compare the candidate using the deterministic conflict rule,
 5. decide the retained/current-state transition,
-6. commit all affected state and feed effects atomically.
+6. commit all affected state and feed effects atomically,
+7. perform safely resumable data/descendant cleanup after commit.
 
 ## Test permutations
 
@@ -50,8 +53,13 @@ At minimum test:
 
 - update A then update B versus B then A,
 - write versus delete in both arrival orders,
+- plain-delete versus prune in both arrival orders,
+- equal-time CID ties within each winner class,
 - duplicate initial/write/update/delete delivery,
+- data-bearing replay of a retained initial write before and after a newer write/delete,
+- duplicate delivery after mutable protocol/role state changes,
 - delete followed by stale and newer writes,
+- cleanup failure and stale resumable-task replay,
 - crash/reopen around the latest-state transition.
 
 See `dwn/records.md` and `dwn/distributed-semantics.md`.

@@ -9,7 +9,7 @@ The DWN draft describes `$recordLimit` as an admission-time strategy (`reject` o
 
 ## Decision
 
-Rust implements the current Enbox read-time occupancy model for `enbox-rust-core#190` (PR #262) and records it as `ENBOX-REC-002`, explicitly classified `enbox-parity` rather than normative DWN behaviour. The draft's admission-time strategy is not implemented and must not be inferred from the invariant ID alone.
+Rust implements the current Enbox read-time occupancy model for `enbox-rust-core#190` (PR #262) and records it as `ENBOX-REC-003`, explicitly classified `enbox-parity` rather than normative DWN behaviour. The draft's admission-time strategy is not implemented and must not be inferred from the invariant ID alone.
 
 ## Consequences
 
@@ -26,6 +26,6 @@ Rust implements the current Enbox read-time occupancy model for `enbox-rust-core
 
 - `enbox-rust-core#190` — read-time visibility alignment (PR #262)
 - `enbox-rust-core#268`, `enboxorg/enbox#1665` — eligible-population Read top-1 and tracked TypeScript bug
-- `ENBOX-REC-002`, `DWN-REC-007`
+- `ENBOX-REC-003`, `DWN-REC-008`
 - `enbox/records.md`, `conformance/queries-and-visibility.md`
 - DWN draft `$recordLimit` (admission-time strategies)
