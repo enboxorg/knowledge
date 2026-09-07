@@ -47,5 +47,19 @@
     "contract": "enbox-parity",
     "sources": ["enbox/encryption.md"],
     "related": ["enboxorg/dwn-spec#64", "enboxorg/enbox-rust-core#191", "enboxorg/enbox-rust-core#241"]
+  },
+  {
+    "id": "ENBOX-ENC-002",
+    "statement": "Delivered decryption key scope must never exceed the authorized scope of the Permission Grant that justifies the delivery; a grantKey is admissible only when its delivered protocol/protocolPath scope is covered by an active, non-context-scoped Records Read or Write grant whose grantor is the author and whose grantee is the recipient.",
+    "contract": "enbox-parity",
+    "sources": ["enbox/encryption.md"],
+    "related": ["dwn/encryption.md", "conformance/encryption.md", "enboxorg/enbox-rust-core#191"]
+  },
+  {
+    "id": "ENBOX-ENC-003",
+    "statement": "Grant-key coverage is directional and not symmetric: a protocolPath-scoped grant does not cover a protocol-scoped delivered key. A read grant without protocolPath covers the whole protocol; a read grant with protocolPath covers only subtree descendants plus local role paths that the scoped subtree's $actions reference with read; a write grant covers only local role paths carrying $keyAgreement, additionally constrained to the grant's subtree when it is protocolPath-scoped.",
+    "contract": "enbox-parity",
+    "sources": ["enbox/encryption.md"],
+    "related": ["ENBOX-ENC-002", "enboxorg/enbox-rust-core#191"]
   }
 ]
