@@ -5,6 +5,7 @@
 - PR / branch / diff:
 - Contract Packet:
 - Reviewer session/model:
+- Independent of implementer / of packet author: yes / no (say which, and why if no)
 
 ## Verdict
 
@@ -12,7 +13,26 @@
 
 ## Contract fidelity
 
+Judged against the packet's binding section and test matrix, not its reference section.
+
 Summary:
+
+Mechanism deviations reported by the implementer, and whether each preserves the observable
+contract:
+
+## Contract soundness
+
+Does the contract solve the stated problem in the concrete scenario, and does it respect the
+non-goals? Check this independently of whether the implementation matches the packet.
+
+Did the packet itself hold up? Take each entry in its "Assumptions to challenge" section and say
+whether it survived, plus any load-bearing assumption the packet failed to list.
+
+| Assumption | Source | Survived? | Basis |
+| --- | --- | --- | --- |
+| | | | |
+
+A contract error is `BLOCK` even when the implementation matches the packet exactly.
 
 ## Invariant coverage
 
