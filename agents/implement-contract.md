@@ -1,7 +1,7 @@
 ---
 domain: agents
 kind: guide
-reviewed: 2026-08-28
+reviewed: 2026-09-09
 ---
 
 # Implement Contract
@@ -40,6 +40,19 @@ Keep the distinction between:
 
 An `enbox-parity` invariant must not be described as normative conformance.
 
+### Prefer idiomatic APIs over ported mechanism
+
+The packet's binding section is its observable contract. Its reference section describes how the
+parity target happens to achieve that, and is not a specification.
+
+Prefer existing idiomatic or typed APIs when they preserve the approved contract. Verify relevant
+acceptance, rejection, normalization, ordering, and canonicalization behaviour before substituting
+them. A library's correctness for its own specification does not establish equivalence with the
+parity target. Any observable difference must be assessed as a possible contract deviation.
+
+Report a verified mechanism deviation (see "Required output"); do not return to discovery for it. Returning to
+discovery is for contract change, not for choosing a better implementation of the same contract.
+
 ### Keep changes scoped
 
 Allowed:
@@ -72,6 +85,25 @@ Do not stop after the happy path if the approved packet calls for duplicate, ord
 
 Prefer table-driven/permutation/property-style tests where the invariant is fundamentally about order-independence or replay.
 
+## Two kinds of deviation
+
+Distinguish them; they have opposite handling.
+
+| | Contract deviation | Mechanism deviation |
+| --- | --- | --- |
+| What changed | the observable behaviour | how it is computed |
+| Example | selecting a different entry, admitting an input the packet rejects | a typed API in place of a ported string algorithm |
+| Handling | stop, return to discovery, re-approve | proceed, report with rationale |
+
+A mechanism deviation is not a defect and must not be "resolved" by rewriting the implementation
+to match the packet's prose.
+
+If a proposed substitution requires changing an approved test's expected result, it is a contract
+deviation. Unchanged test results do not establish equivalence: the matrix may omit relevant
+behaviour. Check the substitution against the full contract, controlling constraints, and source
+evidence; add a distinguishing test where coverage is missing. If the intended result remains
+ambiguous, return to discovery.
+
 ## Discovery during implementation
 
 If implementation reveals evidence that changes the intended semantics:
@@ -102,9 +134,15 @@ Tests added/updated:
 
 Contract deviations:
 - none
+
+Mechanism deviations:
+- <packet said X; implemented Y because Z> | none
 ```
 
-If there are deviations, stop and resolve them before calling the implementation complete.
+If there are **contract** deviations, stop and resolve them before calling the implementation
+complete. **Mechanism** deviations are expected output, not blockers: list them so review checks
+semantics against the full contract and test evidence rather than diffing code against reference
+mechanism.
 
 Also state whether the change requires:
 

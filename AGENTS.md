@@ -12,6 +12,11 @@ For non-trivial semantic work, use the tool-neutral workflows under `agents/`:
 
 Tool-specific Claude/Codex/OpenCode wrappers should invoke these playbooks rather than duplicating their logic.
 
+A Contract Packet states observable behaviour; the parity target's mechanism is reference material an
+implementer may diverge from. Contract deviations return to discovery, mechanism deviations are
+reported and kept. Prefer a reviewer who is neither the implementer nor the packet author, so that an
+error in the contract is visible to someone.
+
 ## Before changing DWN behaviour
 
 1. Read the relevant `dwn/` page for the semantic invariant.

@@ -1,7 +1,7 @@
 ---
 domain: agents
 kind: guide
-reviewed: 2026-08-28
+reviewed: 2026-09-09
 ---
 
 # Contract Discovery
@@ -26,6 +26,10 @@ At least one of:
 - proposed refactor.
 
 ## Required evidence collection
+
+Establish the problem and intended outcome before deriving requirements from the issue or
+reference implementation. Treat suggested mechanisms as proposals unless evidence establishes
+them as constraints.
 
 ### 1. Identify the domain
 
@@ -100,7 +104,42 @@ List the stable invariant IDs that control the behavioural conclusion and preser
 
 If no existing invariant captures an important behavioural contract, note that as a knowledge-gap follow-up rather than inventing an ID locally.
 
-### 6. Build the behavioural test matrix
+### 6. Separate the contract from the mechanism
+
+Write the contract as observable behaviour. Do not promote the parity target's implementation
+mechanism into a requirement.
+
+When you have just traced an upstream implementation line by line, its mechanism is the most
+available thing to write down and the easiest to mistake for the contract. Ask of every sentence
+in the required-behaviour section: *would a correct implementation using a different data
+structure, library, or API violate this?* If yes, and the mechanism is not itself the contract,
+move it to the packet's non-binding reference section.
+
+Implementation choices are non-binding only insofar as changing them preserves the required
+observable behaviour and accepted architectural constraints. String handling, iteration order,
+parsing, and control flow can affect accepted inputs, normalization, selected results, error
+precedence, or durable state. Capture those effects as requirements; leave the means of achieving
+them open.
+
+```text
+binding      "a reference is resolved by its fragment"
+non-binding  "split on the last '#'"
+```
+
+### 7. Surface the assumptions worth challenging
+
+Identify the statements the contract rests on that you did not independently verify — inherited
+from an issue title, an upstream implementation, a prior packet, or the phrasing of the request.
+
+These are where wrong contracts come from. Mechanism drift produces a working implementation that
+looks unlike the packet; a wrong inherited assumption produces an implementation that matches the
+packet exactly and is wrong. The second failure survives review against the packet, so it has to
+be caught before approval.
+
+Record them in the packet's "Assumptions to challenge" section with their source and what breaks
+if each is false. An assumption that reads as settled prose will be approved as settled.
+
+### 8. Build the behavioural test matrix
 
 Before implementation, enumerate the cases required to prove the behaviour.
 
@@ -129,15 +168,22 @@ Produce a Behavioural Contract Packet using `agents/templates/contract-packet.md
 The packet must include:
 
 - task and classification;
+- problem and intent, including the concrete scenario, desired outcome, rationale, and non-goals;
 - relevant sources;
 - controlling invariant IDs and contract classes;
 - draft / TypeScript / Rust behaviour comparison;
-- explicit required behaviour;
+- explicit required observable behaviour, separated from non-binding reference mechanism;
+- the assumptions a reviewer should challenge;
 - edge cases;
 - test matrix;
 - implementation constraints;
 - knowledge/documentation impact;
 - unresolved questions.
+
+The test matrix supplies concrete evidence for the contract; it does not replace it. Prefer
+externally anchored fixtures where they apply to the intended target, and retain the general
+behavioural rule each fixture illustrates. Resolve conflicts between fixtures, prose, and source
+evidence before approval.
 
 ## Stop conditions
 
