@@ -77,6 +77,12 @@ Verify the change keeps separate:
 
 Flag any code/test/docs that present `enbox-parity` behaviour as normative DWN semantics without evidence.
 
+Also flag transient process artefacts copied into code comments — issue numbers
+or URLs, packet references, review severities or finding labels, commit markers,
+or agent-enumerated lists — as `NOTE`, with a follow-up to reword the comment in
+the code's own terms. The invariant-ID tag under the repository's agreed
+convention is the only process reference permitted in a comment.
+
 ### 4. Invariant coverage
 
 For each controlling invariant:

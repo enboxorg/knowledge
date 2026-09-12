@@ -119,3 +119,7 @@ Details:
 
 - Status: `pending` / `approved` / `approved with changes`
 - Notes:
+
+Issue links may also be referenced from the PR description. Packet references,
+review findings, and other ephemeral artefacts stay in this packet; never copy
+them into code comments or PRs.

@@ -94,3 +94,6 @@ Details:
 ## Required follow-ups
 
 - 
+
+Findings and severities stay in this report; never copy them into code comments
+or PRs as labelled or enumerated lists.
