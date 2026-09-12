@@ -40,5 +40,12 @@
     "contract": "implementation-contract",
     "sources": ["dwn/distributed-semantics.md", "decisions/0003-unified-admission.md"],
     "related": ["implementation/message-processing-pipeline.md", "conformance/replication.md"]
+  },
+  {
+    "id": "DWN-AUTH-007",
+    "statement": "A Permission Grant invocation travels in the material the author signature covers, so it cannot be substituted after signing. Where a method also carries the Grant id in its descriptor the two must agree; where it does not, the signed payload is the only place the invocation can travel. Requiring a descriptor copy from a method whose descriptor has no such field makes every grant-bearing operation of that method unusable while the surface still looks implemented.",
+    "contract": "implementation-contract",
+    "sources": ["dwn/permissions.md", "dwn/authorization.md"],
+    "related": ["DWN-AUTH-003", "implementation/authorization-evaluation.md", "conformance/protocols-and-authorization.md"]
   }
 ]

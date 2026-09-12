@@ -61,5 +61,26 @@
     "contract": "enbox-parity",
     "sources": ["enbox/encryption.md"],
     "related": ["ENBOX-ENC-002", "enboxorg/enbox-rust-core#191"]
+  },
+  {
+    "id": "ENBOX-ENC-004",
+    "statement": "A role may hold several valid audiences at once, so collection surfaces project one current audience per {protocol, rolePath, contextId}: a real tenant signature outranks everything, then the oldest dateCreated, then the lowest recordId. Oldest rather than newest keeps a later flood of non-tenant audiences inert. An author-delegated tenant mint and an owner countersignature carry no tenant priority. Superseded audiences remain valid delivery references, and a caller naming a record id or pinning the full {protocol, rolePath, contextId, keyId} identity receives that stored key rather than whichever is current.",
+    "contract": "enbox-parity",
+    "sources": ["enbox/encryption.md"],
+    "related": ["DWN-REC-008", "ENBOX-ENC-001", "conformance/queries-and-visibility.md"]
+  },
+  {
+    "id": "ENBOX-ENC-005",
+    "statement": "An audience is a directory entry and a delivery is addressed key material, so they are reached differently: an audience is readable by anyone who can name it exactly, and enumerable only with authority over the role itself, while a delivery is reachable only by its parties or by a grant joining the reader to that recipient and covering the delivered role. Neither has an anonymous route. Recipient access to an already-delivered key survives revocation of the role it was delivered for.",
+    "contract": "enbox-parity",
+    "sources": ["enbox/encryption.md"],
+    "related": ["DWN-ENC-003", "ENBOX-ENC-003", "conformance/encryption.md"]
+  },
+  {
+    "id": "ENBOX-ENC-006",
+    "statement": "Re-examining retained encryption-control state after a configuration change may destroy a record only when the configuration itself contradicts it; every undetermined outcome retains. The newest configuration is asked only whether the role still exists, not whether it still carries $keyAgreement, because dropping a key agreement stops new material being minted without invalidating material already sealed under it. Replaying whether a retained record was ever admissible consults nothing mutable: a record standing on its writer's own position is preserved without re-fetching grants or re-resolving DIDs.",
+    "contract": "enbox-parity",
+    "sources": ["enbox/encryption.md", "dwn/protocols.md"],
+    "related": ["DWN-PROTO-004", "DWN-AUTH-004", "conformance/encryption.md"]
   }
 ]

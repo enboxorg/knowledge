@@ -23,6 +23,15 @@ MessagesQuery     ordered retained-message feed
 MessagesSubscribe live message-feed notification/subscription
 ```
 
+These surfaces answer the same question about the same durable head, so
+equivalent inputs resolve to the same logical Record population and a count
+counts that population. Where a projection narrows the population — choosing
+one current Record from several valid candidates — the collection surfaces
+apply it and an exact read does not, so a projected population can legitimately
+differ from what an exact read returns. Such a divergence is a documented
+contract, not an implementation detail: it has to be stated and asserted rather
+than discovered.
+
 ## Records versus Messages
 
 Records interfaces answer application-state questions. Messages interfaces answer retained-message and replication questions.
