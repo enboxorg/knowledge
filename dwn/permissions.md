@@ -21,6 +21,16 @@ Grant validity is evaluated at the operation's authorization time. A later Revoc
 
 Long-lived disclosure such as a live subscription can require current authority to be checked again while delivery continues.
 
+## Invoking a Grant
+
+An operation invokes a Grant by naming it in the material the author signature
+covers, so the invocation cannot be substituted after signing. Where a method
+also carries the Grant id in its descriptor, the two must agree; where it does
+not, the signed payload is the only place the invocation can travel. An engine
+that requires a descriptor copy from a method whose descriptor has no such
+field rejects every grant-bearing operation of that method, which is easy to
+miss because the surface still looks implemented.
+
 ## Discovery
 
 Permission Records are normal DWN Records governed by the Permissions Protocol. They are discovered through Records query semantics rather than through a separate Permissions query interface.

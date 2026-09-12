@@ -72,9 +72,9 @@
   },
   {
     "id": "DWN-REC-008",
-    "statement": "RecordsRead, RecordsQuery, RecordsCount, and RecordsSubscribe snapshots resolve equivalent inputs to the same logical Record-ID population at the same durable head; Count counts that projected population.",
+    "statement": "RecordsRead, RecordsQuery, RecordsCount, and RecordsSubscribe snapshots resolve equivalent inputs to the same logical Record-ID population at the same durable head; Count counts that projected population. The one accepted exception is the encryption-control current-audience projection, which the collection surfaces apply and direct Read does not: a Read returns the first readable candidate in the requested order, so a role holding several valid audiences can legitimately answer a Read and a Query differently.",
     "contract": "implementation-contract",
     "sources": ["dwn/records.md", "dwn/queries-and-sync.md"],
-    "related": ["enboxorg/enbox-rust-core#190", "enboxorg/enbox-rust-core#268", "enboxorg/enbox#1665", "conformance/queries-and-visibility.md"]
+    "related": ["ENBOX-ENC-004", "enboxorg/enbox-rust-core#190", "enboxorg/enbox-rust-core#268", "enboxorg/enbox#1665", "conformance/queries-and-visibility.md"]
   }
 ]
