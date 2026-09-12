@@ -47,5 +47,12 @@
     "contract": "implementation-contract",
     "sources": ["dwn/permissions.md", "dwn/authorization.md"],
     "related": ["DWN-AUTH-003", "implementation/authorization-evaluation.md", "conformance/protocols-and-authorization.md"]
+  },
+  {
+    "id": "DWN-AUTH-008",
+    "statement": "A direct Records or Protocols operation's descriptor grant invocation and author-signature-payload grant invocation must match exactly; any disagreement rejects the message, so a signed descriptor cannot be paired with a substituted grant.",
+    "contract": "normative",
+    "sources": ["dwn/authorization.md", "dwn/permissions.md"],
+    "related": ["conformance/permissions.md", "DWN-AUTH-007", "enboxorg/enbox-rust-core#283", "decisions/0006-records-delete-grant-invocation-parity.md"]
   }
 ]

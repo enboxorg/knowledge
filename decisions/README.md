@@ -20,6 +20,7 @@ Prefer focused ADR-style documents over broad design essays.
 - [ADR 0003: Replication Reuses Normal DWN Admission](0003-unified-admission.md)
 - [ADR 0004: Latest Record State Transitions Are Store-Owned and Atomic](0004-store-owned-record-transitions.md)
 - [ADR 0005: Read-Time Record-Limit Occupancy Follows Current Enbox Parity](0005-read-time-record-limit-occupancy.md)
+- [ADR 0006: RecordsDelete Carries a Grant Invocation Per Current Enbox Parity](0006-records-delete-grant-invocation-parity.md)
 
 ## Lifecycle
 
