@@ -64,6 +64,21 @@ For retained state, authorization, or sync changes, reason about duplicate deliv
 
 For application/protocol design, also review the actor matrix, role lifecycle, metadata leakage, protocol evolution, stale offline authority, key recovery/membership changes, and whether an example's assumptions actually match the product.
 
+## Code comment hygiene
+
+Code comments describe what the code does, in terms of the code itself. The only
+process reference permitted in a code comment is a stable invariant ID under the
+target repository's agreed convention (for example `// Covers: DWN-REC-004`).
+Nothing else process-related belongs in a comment: no issue numbers or URLs, no
+Contract Packet references, no review severities or finding labels (`BLOCK`,
+`GAP`, `RISK`, `NOTE`), no commit or milestone markers, no agent-enumerated
+lists (`A.`, `B.`, `(a)`, `(b)`).
+
+Issue references are fine in packets, review reports, and PR descriptions.
+Ephemeral artefacts — packet file paths, review findings and severities, commit
+markers, enumerated lists — stay in the artefact that produced them and never
+move into code or PRs.
+
 ## Knowledge maintenance
 
 When semantics or implementation behaviour changes, update or explicitly review affected `dwn/`, `enbox/`, `learning/`, `invariants/`, `builders/`, `examples/`, `implementation/`, `conformance/`, and `agents/` material. Never present implementation behaviour as normative merely because it has an invariant ID.

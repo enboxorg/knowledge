@@ -79,6 +79,13 @@ For semantic/conformance/parity tests, reference relevant invariant IDs using th
 
 Do not annotate every unit test mechanically. Use invariant IDs where the test exists to prove a stable behavioural contract.
 
+That tag is the only process reference permitted in a code comment. Comments
+otherwise describe the code in its own terms: do not copy issue numbers or URLs,
+packet references, review severities or findings, commit markers, or
+agent-enumerated (`A.`/`B.`) lists into comments. Issue linkage lives in the
+packet, the review report, and the PR description; ephemeral artefacts stay in
+the artefact that produced them and never move into code or PRs.
+
 ### Implement the whole test matrix
 
 Do not stop after the happy path if the approved packet calls for duplicate, ordering, repair, crash/reopen, historical authorization, or convergence cases.
