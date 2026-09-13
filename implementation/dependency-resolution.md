@@ -79,15 +79,21 @@ a larger change.
 
 ### Chosen interim behaviour
 
-Admission stays current-state and unforgeable. The distinction is in the failure
-class:
+Admission stays current-state and unforgeable, and the client-facing failure is
+unchanged: a tombstoned parent and a parent that has not arrived return the same
+missing-parent error. The distinction stays local to the receiver. A node that
+holds the tombstone classifies the failed write as terminal (`Invalid`) during
+replication/reconciliation instead of a repairable `Incomplete`, so it stops
+retrying a dependency that can never be repaired.
 
-- parent not yet seen -> missing dependency (repairable `Incomplete`);
-- parent tombstoned -> permanent (`Invalid`), because repair is impossible.
+Keeping the distinction off the wire matters: putting it in the reply would let
+any submitter learn, from an error code, whether a record was deleted on that node.
+Only the node that already sees its own tombstone acts on it.
 
 This removes the doomed retry loop but does **not** restore order independence:
 the early-admitted child still exists on one replica only. Current TypeScript Enbox
-still classifies both cases as `Incomplete`; aligning it is an upstream change.
+still classifies both cases `Incomplete`; the change to classify a tombstoned parent
+locally is `enboxorg/enbox#1680`, mirrored in Rust by `enboxorg/enbox-rust-core#303`.
 
 **Open decision.** Whether to converge this properly (for example, making a parent
 tombstone part of the child's dependency closure) is unresolved. Until decided, do
