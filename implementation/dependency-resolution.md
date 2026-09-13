@@ -77,25 +77,15 @@ arrive after the child was admitted; full convergence would require the parent's
 tombstones to be part of the child's dependency closure (or retraction), which is
 a larger change.
 
-### Chosen interim behaviour
+### Resolution: retained ancestry (ADR 0007)
 
-Admission stays current-state and unforgeable, and the client-facing failure is
-unchanged: a tombstoned parent and a parent that has not arrived return the same
-missing-parent error. The distinction stays local to the receiver. A node that
-holds the tombstone classifies the failed write as terminal (`Invalid`) during
-replication/reconciliation instead of a repairable `Incomplete`, so it stops
-retrying a dependency that can never be repaired.
+Structural parent existence is evaluated against the parent's **retained initial
+write**, not its current liveness. A soft delete does not remove ancestry (and
+does not seal or hide children); a `prune` removes ancestry and is terminal. See
+`decisions/0007-retained-parent-ancestry.md`.
 
-Keeping the distinction off the wire matters: putting it in the reply would let
-any submitter learn, from an error code, whether a record was deleted on that node.
-Only the node that already sees its own tombstone acts on it.
-
-This removes the doomed retry loop but does **not** restore order independence:
-the early-admitted child still exists on one replica only. Current TypeScript Enbox
-still classifies both cases `Incomplete`; the change to classify a tombstoned parent
-locally is `enboxorg/enbox#1680`, mirrored in Rust by `enboxorg/enbox-rust-core#303`.
-
-**Open decision.** Whether to converge this properly (for example, making a parent
-tombstone part of the child's dependency closure) is unresolved. Until decided, do
-not present the behaviour as normative, and do not change one engine's behaviour
-without a parity decision.
+This restores `DWN-REC-004` for parent-bearing children without retraction or
+trusted timestamps. An implementation that consults current liveness — current
+Enbox, and the interim receiver-local terminal classification in
+`enboxorg/enbox#1680` / `enboxorg/enbox-rust-core#303` — is order-dependent and
+leaves a permanent dead letter when the delete precedes the child.

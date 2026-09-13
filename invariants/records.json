@@ -24,8 +24,8 @@
     "id": "DWN-REC-004",
     "statement": "The final logical state of a Record must not depend on network delivery order when replicas possess the same valid message set.",
     "contract": "implementation-contract",
-    "sources": ["dwn/distributed-semantics.md", "implementation/records-state-machine.md"],
-    "related": ["conformance/records.md"]
+    "sources": ["dwn/distributed-semantics.md", "implementation/records-state-machine.md", "decisions/0007-retained-parent-ancestry.md"],
+    "related": ["conformance/records.md", "enboxorg/enbox#1684", "enboxorg/enbox-rust-core#304"]
   },
   {
     "id": "ENBOX-REC-001",
