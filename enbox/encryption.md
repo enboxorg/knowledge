@@ -5,7 +5,7 @@ repositories:
   - enboxorg/enbox
   - enboxorg/enbox-rust-core
 upstream-baseline: c63bf424ac0997583db825e8a5fddf1507d30c40
-reviewed: 2026-09-12
+reviewed: 2026-09-13
 related-issues:
   - enbox-rust-core#191
   - enbox-rust-core#207
@@ -123,6 +123,43 @@ mutable. A record standing on its writer's own position — countersigned by the
 owner, authored by the tenant, signed by a delegate, or invoking a grant — is
 preserved without re-fetching that grant or re-resolving that DID, because
 their absence today says nothing about what was authorized then.
+
+## Grant-key delivery records
+
+Separately-identified clients and agents receive decryption keys through two
+immutable record types under the fixed core protocol
+`https://identity.foundation/dwn/protocols/encryption`, which is resolved by
+lookup precedence and never installed: `grantKey` carries an encrypted
+(`encryptionRequired`) payload the node never decrypts, and `wrappedGrantKey`
+carries a plaintext wrapped envelope validated against the vendored
+`wrapped-grant-key-envelope.json` schema. Both are created by anyone, readable
+only by the delivery recipient, tagged with `grantId`, `protocol`, `keyId`
+(43-character base64url thumbprint shape) and optional `protocolPath`, and
+limited to 30,000 inline bytes.
+
+Admission checks a delivery at its signed timestamp: representation, tags,
+the referenced grant, grant activity (`dateGranted <= messageTimestamp <
+dateExpires`, revoked only when the oldest revocation is at or before that
+timestamp), grantor authorship, grantee recipientship, and directional scope
+coverage, re-checked against the historical configuration when role evidence
+is needed. A delivery without a data stream is retained but not validated and
+never becomes latest state. Admission errors carry stable identities, with
+missing grants and missing history kept distinct from scope denial so
+dependency repair can retry.
+
+Coverage (`ENBOX-ENC-003`) is directional: a protocol-wide Read grant covers
+the protocol key and every path; a path Read grant covers its subtree plus
+keyed local roles its subtree reads through; Write grants cover only keyed
+local roles, restricted to the grant subtree when path-scoped. A path-scoped
+grant never covers a protocol-scoped key.
+
+Resolution re-checks at the current time before a key is used: current grant
+activity, any revocation, tag and payload agreement (including an absent
+`protocolPath` on both sides), coverage under the current configuration,
+target coverage, the scope-derived derivation path, and the public and
+derived-public thumbprints against the delivered key id. Expiry or revocation
+refuses the key without deleting the admitted delivery, and already-held keys
+are never erased (`DWN-ENC-003`).
 
 ## RecordsWrite binding
 
