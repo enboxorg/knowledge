@@ -1,7 +1,7 @@
 ---
 domain: implementation
 kind: guide
-reviewed: 2026-08-28
+reviewed: 2026-09-13
 ---
 
 # Dependency Resolution
@@ -49,3 +49,47 @@ Set bounds on recursion, repeated failures, and dependency fan-out. Detect cycle
 Not every missing decryption key is necessarily an admission dependency. Keep "can this message become valid DWN state?" separate from "can this reader decrypt/use the payload?" where the protocol defines those separately.
 
 See `dwn/queries-and-sync.md`, `dwn/encryption.md`, and `implementation/error-model.md`.
+
+## Known parity caveat: a deleted parent (and role revocation) is not repairable
+
+Current Enbox resolves a parent Record by its current, not-deleted state (a
+latest-base-state filter plus a tombstone check), and a delete is terminal.
+Together these make admission of a parent-bearing child depend on delivery order:
+
+- If the child is admitted while the parent still exists, it is accepted; a later
+  soft delete does not cascade to it.
+- If the parent's delete is already the latest state, the child is rejected. The
+  parent can never return, so the write can never be repaired.
+
+Two replicas holding the same valid message set can therefore converge to
+different Record state, which conflicts with `DWN-REC-004` read as a global
+admission guarantee. Role revocation has the same shape: role lookups also use the
+latest-base-state filter, so a role-invoking write delivered after the role delete
+is rejected even if it was authored before.
+
+### Why the timestamp-relative alternative is rejected
+
+Evaluating parent existence at the child's governing timestamp is draft-faithful
+in spirit but unsafe: `messageTimestamp` is author-controlled, so an author can
+backdate a child past the parent's delete and have it admitted. It also does not
+converge on its own, because a tombstone whose timestamp precedes the child's can
+arrive after the child was admitted; full convergence would require the parent's
+tombstones to be part of the child's dependency closure (or retraction), which is
+a larger change.
+
+### Chosen interim behaviour
+
+Admission stays current-state and unforgeable. The distinction is in the failure
+class:
+
+- parent not yet seen -> missing dependency (repairable `Incomplete`);
+- parent tombstoned -> permanent (`Invalid`), because repair is impossible.
+
+This removes the doomed retry loop but does **not** restore order independence:
+the early-admitted child still exists on one replica only. Current TypeScript Enbox
+still classifies both cases as `Incomplete`; aligning it is an upstream change.
+
+**Open decision.** Whether to converge this properly (for example, making a parent
+tombstone part of the child's dependency closure) is unresolved. Until decided, do
+not present the behaviour as normative, and do not change one engine's behaviour
+without a parity decision.
