@@ -1,7 +1,7 @@
 ---
 domain: conformance
 kind: guide
-reviewed: 2026-09-12
+reviewed: 2026-09-13
 ---
 
 # Encryption Conformance
@@ -58,5 +58,15 @@ Use with `dwn/encryption.md` and the currently targeted encryption contract.
 - [ ] A configuration learned late still governs the Records whose timestamps it covers.
 - [ ] A role that survives a configuration change but loses its key agreement keeps custody of material already sealed under it.
 - [ ] The obligation to re-examine retained control state survives a crash at any point after the configuration is accepted, and repeating it is safe.
+
+### Grant-key delivery
+
+- [ ] Deliveries use exactly the two immutable core types: encrypted `grantKey` and plaintext `wrappedGrantKey`, with create/anyone and recipient-of-path actions that confer no public readability.
+- [ ] Delivery tags carry string `grantId`, `protocol` and 43-character base64url `keyId` plus optional string `protocolPath`, and nothing else; oversized or malformed wrapped envelopes fail closed with stable identities.
+- [ ] Admission checks representation, tags, grant, activity at the signed timestamp, grantor authorship, grantee recipientship, and directional scope, re-checked against the historical configuration when role evidence is needed.
+- [ ] A delivery without a data stream is retained but not validated and never becomes latest state.
+- [ ] Missing grants and missing history stay distinguishable from scope denial so dependency repair can retry.
+- [ ] Directional coverage holds: protocol-wide Read covers protocol key and paths; path Read covers its subtree plus keyed local roles its subtree reads through; Write covers only keyed local roles, subtree-restricted when path-scoped; a path grant never covers a protocol key; prefix collisions do not cover.
+- [ ] Resolution re-checks current activity, any revocation, tag and payload agreement, coverage under the current configuration, target coverage, derivation path, and both key thumbprints; expiry or revocation refuses the key without deleting the delivery or erasing held keys.
 
 Where draft and current Enbox encryption models differ, label fixtures explicitly and link the relevant divergence issue rather than treating both as one contract.
