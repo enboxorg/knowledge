@@ -64,6 +64,21 @@ Tracked by `enbox-rust-core#189`.
 
 Rust implemented this ordering and store-owned atomic latest-state transitions under `enbox-rust-core#189`.
 
+## Parent ancestry and deletes
+
+Current TypeScript and Rust resolve a structural parent from its **retained
+initial write** in the expected protocol, not from current liveness. A soft
+`RecordsDelete` does not remove ancestry: a child written under a soft-deleted
+parent is admitted and remains addressable by its own Record ID, path, and
+context, while the parent itself reads as absent. A `prune: true` delete removes
+ancestry and settles the rejected descendant terminally (replication classifies it
+superseded rather than a repairable dependency), so a pruned subtree leaves no
+dead letter. Role and grant lookups stay current-state, so soft-delete revocation
+still wins.
+
+Recorded as ADR 0007; implemented in `enboxorg/enbox#1685` and
+`enbox-rust-core#304`.
+
 ## Visibility gap
 
 Physical retained state and application-visible state are separate concerns. Query/Count/Subscribe route through a shared visibility model including read-time record limits, context boundaries, published selection and initial-write attachment. Rust alignment landed under `enbox-rust-core#190` (PR #262) and is pinned by `ENBOX-REC-003` and `DWN-REC-008`.
