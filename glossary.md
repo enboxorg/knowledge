@@ -1,5 +1,11 @@
 # Glossary
 
+## Agent (runtime)
+The Enbox user-agent: the DID, key manager, and secret store acting for one user. Rust owner: `dwn-rs-agent`. Distinct from a delegated agent principal.
+
+## Delegated agent (principal)
+A software/AI principal acting under a permission grant. Described by protocol and permission types, not by the agent runtime crate.
+
 ## Author
 The semantic principal on whose behalf a DWN message acts. With author delegation, the Author can differ from the cryptographic Signer.
 
