@@ -85,7 +85,8 @@ does not seal or hide children); a `prune` removes ancestry and is terminal. See
 `decisions/0007-retained-parent-ancestry.md`.
 
 This restores `DWN-REC-004` for parent-bearing children without retraction or
-trusted timestamps. An implementation that consults current liveness — current
-Enbox, and the interim receiver-local terminal classification in
-`enboxorg/enbox#1680` / `enboxorg/enbox-rust-core#303` — is order-dependent and
-leaves a permanent dead letter when the delete precedes the child.
+trusted timestamps. The interim receiver-local terminal classification for soft
+deletes (`enboxorg/enbox#1679` / `#1680`, `enboxorg/enbox-rust-core#303`) is
+superseded. Current Enbox and Rust both resolve parent ancestry from the retained
+initial write (`enboxorg/enbox#1685`, `enboxorg/enbox-rust-core#304`); a `prune`
+tombstone remains the terminal case.

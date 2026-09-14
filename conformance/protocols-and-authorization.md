@@ -14,6 +14,8 @@ Use with `dwn/protocols.md` and `dwn/authorization.md`.
 - [ ] Structure paths and rule sets are resolved deterministically.
 - [ ] Record writes must match the declared protocol/path structure.
 - [ ] Cross-context parent/path violations are rejected.
+- [ ] A parent-bearing write resolves its parent from the retained initial write; a soft-deleted parent still satisfies ancestry.
+- [ ] A child of a pruned parent is rejected terminally, not as a retryable missing dependency.
 - [ ] Unsupported or malformed protocol definitions do not become active authorization policy.
 
 ## Actor semantics
@@ -38,4 +40,5 @@ Use with `dwn/protocols.md` and `dwn/authorization.md`.
 - [ ] Wrong protocol path is rejected.
 - [ ] Wrong context/parent is rejected.
 - [ ] Role from another context does not leak authority.
+- [ ] Parent-bearing child admission is identical across arrival permutations (parent-first, child-first, soft-delete-first, prune-first).
 - [ ] Delegation outside its scope is rejected.

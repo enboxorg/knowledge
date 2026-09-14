@@ -1,6 +1,6 @@
 # ADR 0007: Structural Parent Ancestry Uses Retained Writes; Only Prune Removes Ancestry
 
-- Status: Accepted (2026-09-13); Enbox parity divergence tracked upstream
+- Status: Accepted (2026-09-13); implemented in Enbox #1685 and Rust #304
 - Date: 2026-09-13
 
 ## Context
@@ -84,10 +84,10 @@ Separate structural ancestry from liveness:
   unchanged. A soft delete never revoked that authority.
 - **Soft delete does not seal.** Existing children already survive a soft delete;
   this makes the rule consistent. To remove a subtree, use `prune`, which purges
-  it. This is a divergence from current Enbox parity and requires a `dwn-spec`
-  clarification ("exist"/ancestry = retained write) and an upstream Enbox
-  proposal. Until Enbox agrees, a Rust implementation is an intentional,
-  documented divergence, not parity.
+  it. Current Enbox and Rust both implement this rule (`enboxorg/enbox#1685`,
+  `enbox-rust-core#304`), so it is no longer a parity divergence. A `dwn-spec`
+  clarification ("exist"/ancestry = retained write) is filed as
+  `enboxorg/dwn-spec#70` to make the reading explicit.
 - The interim receiver-local terminal classification for soft-deleted parents is
   superseded. The mechanism remains for pruned parents and for roles.
 
@@ -112,10 +112,11 @@ None.
 
 - `enboxorg/enbox#991` — closure-based admission model (closed; 3b absence rule)
 - `enboxorg/enbox#1679`, `enboxorg/enbox#1680` — interim terminal classification
-- `enboxorg/enbox#1684` — TypeScript retained-ancestry implementation
+- `enboxorg/enbox#1684` — TypeScript retained-ancestry issue (implemented, `enboxorg/enbox#1685`)
 - `enboxorg/enbox-rust-core#303` — Rust parent verification and classification
-- `enboxorg/enbox-rust-core#304` — Rust retained-ancestry implementation
+- `enboxorg/enbox-rust-core#304` — Rust retained-ancestry implementation (merged)
+- `enboxorg/knowledge#19` — knowledge adoption tracking
 - `enboxorg/enbox-rust-core#188` — durable feed substrate and reconciliation
 - `DWN-REC-004` (implementation-contract), `DWN-PROTO-001`, `DWN-PROTO-004`, `DWN-PROTO-005`
 - `implementation/dependency-resolution.md`, `dwn/protocols.md`
-- `enboxorg/dwn-spec` issue — clarify that "exist" means retained, and that prune removes ancestry
+- `enboxorg/dwn-spec#70` — clarify that "exist"/ancestry means the retained write, and that prune removes ancestry

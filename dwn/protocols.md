@@ -72,6 +72,19 @@ Composition turns protocol resolution into a graph rather than one self-containe
 
 Namespaces do not simply merge across a `$ref`; the referenced position and children can have different governing protocol/type sources.
 
+### Parent ancestry
+
+A child's structural parent is proven by the parent's **retained initial write**
+in the expected protocol, not by the parent's current liveness. A soft
+`RecordsDelete` does not remove ancestry: a child may be written under a
+soft-deleted parent and stays addressable by its own Record ID, protocol path,
+and context, while the parent itself reads as absent. A `prune` delete removes
+ancestry, because prune is the explicit subtree-removal operation; a child of a
+pruned parent is terminal and unrepairable. Roles and grants are separate
+concerns and remain current-state, so revocation still wins.
+
+See `decisions/0007-retained-parent-ancestry.md`.
+
 ## Encryption policy
 
 Protocols can require encryption and define key-agreement policy. Encryption policy belongs to protocol semantics, while actual decryption key distribution is a separate capability lifecycle.
@@ -99,5 +112,6 @@ Protocol directives can affect how Records are delivered or selected for visibil
 - Do not evaluate historical Records only against the newest protocol configuration.
 - Do not treat a protocol role as globally valid outside its context.
 - Do not resolve cross-protocol parents using a same-protocol-only query.
+- Do not treat a soft-deleted parent as unusable ancestry; only `prune` removes ancestry.
 - Do not assume draft directive semantics exactly match current Enbox without checking known divergence issues.
 - Do not merge authorization policy and encryption key possession into one concept.
