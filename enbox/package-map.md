@@ -34,12 +34,16 @@ crates/
     events/
     filters/
     handlers/
-    identity/
     interfaces/
     permissions/
     runtime/
     stores/
     sync/
+
+  dwn-rs-agent/
+    agent/      (identity, vault key lifecycle, secret-store traits)
+    auth/       (tenant registration/setup, legacy connect/delegate helpers)
+    sqlite secret-store backend (feature `sqlite`)
 
   dwn-rs-stores/
     sqlite-backed stores
@@ -65,7 +69,9 @@ handlers/
 
 - `handlers/records/common.rs` currently carries substantial shared Records validation/admission logic.
 - `permissions/mod.rs` carries a large portion of Permission Grant authorization.
-- store traits live in core; SQLite implementations live in `dwn-rs-stores`.
+- store traits live in core; SQLite implementations live in `dwn-rs-stores`. Exception: agent secret/key backend traits (`SecretStore` and related seams) live in `dwn-rs-agent`; the `agent_secrets` schema is currently defined by the `dwn-rs-stores` migration.
+- Agent identity, tenant registration/setup, and connect helpers live in `dwn-rs-agent` (`agent/`, `auth/`); `dwn-rs-core` no longer carries `identity/`.
+- Dependency direction is `dwn-rs-agent` → `dwn-rs-stores`, never the reverse; this is load-bearing for vault and DWN-backed-store work, where secret-schema and file ownership get revisited.
 - durable feed ownership belongs to the message store; the event-log adapter observes that feed rather than maintaining a second authoritative history.
 - sync orchestration should move toward the durable-feed model owned by `MessagesQuery`/`MessagesSubscribe`, not legacy `MessagesSync`/`StateIndex`.
 

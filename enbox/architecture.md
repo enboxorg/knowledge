@@ -54,7 +54,7 @@ Replication feeds messages back through the same admission semantics rather than
 - **DWN engine**: message parsing, validation, authorization, Records/Protocols/Messages handlers.
 - **Stores**: durable messages, data, feed metadata, resumable tasks.
 - **Identity/signatures**: DID resolution and JWS verification.
-- **Agent/runtime**: link planning, sync orchestration, session state, remote transport.
+- **Agent/runtime**: link planning, sync orchestration, session state, remote transport. Rust owner: `dwn-rs-agent` (agent identity/vault, `auth` registration/connect); reference: `@enbox/agent` with `@enbox/auth` above it.
 - **Encryption control**: record envelope primitives plus higher-level key-distribution/control records.
 - **Transport/topology**: JSON-RPC/HTTP/WS, endpoint discovery, forwarding, proxying.
 
