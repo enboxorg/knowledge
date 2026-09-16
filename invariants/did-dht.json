@@ -1,0 +1,79 @@
+[
+  {
+    "id": "DID-DHT-001",
+    "statement": "A did:dht suffix is the z-base-32 encoding of the Ed25519 identity public key; the identity verification method takes fragment `0` while its JWK `kid` is the RFC 7638 thumbprint, never `0`.",
+    "contract": "external-spec",
+    "sources": ["enbox/did-dht.md"],
+    "related": ["enboxorg/enbox-rust-core#317", "enboxorg/enbox-rust-core#308"]
+  },
+  {
+    "id": "DID-DHT-002",
+    "statement": "A DID DHT v0 document maps to an authoritative DNS response packet with ID 0, TTL 7200, and compressed names; root, verification-method, relationship, service, alsoKnownAs, controller, and type-index records follow the v0 property mapping, omitting defaults only where decoding restores them.",
+    "contract": "external-spec",
+    "sources": ["enbox/did-dht.md"],
+    "related": ["enboxorg/enbox-rust-core#317"]
+  },
+  {
+    "id": "DID-DHT-003",
+    "statement": "DNS TXT character strings hold at most 255 bytes; longer logical values span segments without splitting UTF-8 code points, and authoritative-gateway NS records carry fully qualified domain names.",
+    "contract": "external-spec",
+    "sources": ["enbox/did-dht.md"],
+    "related": ["enboxorg/enbox-rust-core#317"]
+  },
+  {
+    "id": "DID-DHT-004",
+    "statement": "BEP44 messages sign the exact preimage `3:seqi<seq>e1:v<len>:<value>` over the raw compressed DNS bytes with a monotonically increasing integer sequence, and the value is at most 1000 bytes.",
+    "contract": "external-spec",
+    "sources": ["enbox/did-dht.md"],
+    "related": ["enboxorg/enbox-rust-core#317"]
+  },
+  {
+    "id": "DID-DHT-005",
+    "statement": "Pkarr relay PUT bodies are `signature[64] || sequence_be[8] || v` with content type application/octet-stream addressed at the gateway identity URL; a terminal non-2xx rejects the publication and never reports success.",
+    "contract": "external-spec",
+    "sources": ["enbox/did-dht.md"],
+    "related": ["enboxorg/enbox-rust-core#317"]
+  },
+  {
+    "id": "DID-DHT-006",
+    "statement": "Current Enbox agent documents use verification methods `#0` (identity; authentication, assertion, invocation, delegation), `#sig` (authentication, assertion), `#enc` (key agreement), and an optional `#dwn` DecentralizedWebNode service; decoding normalizes method type to JsonWebKey, fills default algorithms and thumbprint kids, and coerces endpoints to arrays.",
+    "contract": "enbox-parity",
+    "sources": ["enbox/did-dht.md"],
+    "related": ["enboxorg/enbox-rust-core#308", "enboxorg/enbox-rust-core#317"]
+  },
+  {
+    "id": "DID-DHT-007",
+    "statement": "Codec round trips preserve the decoder fixpoint: for every supported decoder output, decode(encode(decode(x))) equals decode(x).",
+    "contract": "implementation-contract",
+    "sources": ["enbox/did-dht.md", "conformance/identity-attestation-topology.md"],
+    "related": ["enboxorg/enbox-rust-core#317", "enboxorg/enbox-rust-core#318"]
+  },
+  {
+    "id": "DID-DHT-008",
+    "statement": "Current TypeScript Enbox enforces the 1000-byte BEP44 limit on the signing preimage instead of the value; corrections check `v` alone.",
+    "contract": "enbox-parity",
+    "sources": ["enbox/did-dht.md"],
+    "related": ["decisions/0008-did-dht-external-spec-parity.md", "enboxorg/enbox-rust-core#317"]
+  },
+  {
+    "id": "DID-DHT-009",
+    "statement": "Current TypeScript Enbox splits TXT values at UTF-16 code-unit boundaries instead of UTF-8 byte boundaries.",
+    "contract": "enbox-parity",
+    "sources": ["enbox/did-dht.md"],
+    "related": ["decisions/0008-did-dht-external-spec-parity.md", "enboxorg/enbox-rust-core#317"]
+  },
+  {
+    "id": "DID-DHT-010",
+    "statement": "Current TypeScript Enbox parses TXT properties by splitting on every `=`, truncating values that contain it.",
+    "contract": "enbox-parity",
+    "sources": ["enbox/did-dht.md"],
+    "related": ["decisions/0008-did-dht-external-spec-parity.md", "enboxorg/enbox-rust-core#317"]
+  },
+  {
+    "id": "DID-DHT-011",
+    "statement": "Current TypeScript Enbox emits the full gateway URI, not its host, as NS record data.",
+    "contract": "enbox-parity",
+    "sources": ["enbox/did-dht.md"],
+    "related": ["decisions/0008-did-dht-external-spec-parity.md", "enboxorg/enbox-rust-core#317"]
+  }
+]

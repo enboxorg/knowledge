@@ -31,3 +31,12 @@ Use with `dwn/identity-and-signatures.md`, `dwn/attestations.md`, and `dwn/topol
 - [ ] DID-as-Service-Endpoint recursion/depth behaviour is tested where supported.
 - [ ] Failover between endpoints does not change message semantics or bypass admission.
 - [ ] Replicas behind different endpoints converge on the same admissible message set.
+
+## DID DHT publication
+
+- [ ] Sequences are Unix-second ceilings raised past any previous value; clock rollback never regresses them.
+- [ ] Values over 1000 bytes fail before signing; wrong-length, foreign-key, and invalid signatures fail before transport.
+- [ ] Terminal non-2xx responses (including 409) reject with status and sequence; exact retries reuse sequence and bytes.
+- [ ] Redirects preserve PUT method, content type, and body; private targets stay gated.
+- [ ] Codecs hold the decoder fixpoint; constructors emit decoder-normal documents.
+- [ ] Cross-runtime fixtures cover both directions: Rust reads pinned TypeScript output, and the pinned decoder accepts Rust bytes.
