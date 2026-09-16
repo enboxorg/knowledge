@@ -10,7 +10,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
-ALLOWED_INVARIANT_CONTRACTS = {"normative", "enbox-parity", "implementation-contract"}
+ALLOWED_INVARIANT_CONTRACTS = {"normative", "enbox-parity", "implementation-contract", "external-spec"}
 
 errors: list[str] = []
 warnings: list[str] = []

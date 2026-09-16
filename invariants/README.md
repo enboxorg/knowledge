@@ -15,6 +15,7 @@ The files are JSON arrays. Every invariant has:
 - `normative` — derived from the DWN draft/spec knowledge layer.
 - `enbox-parity` — current TypeScript Enbox behaviour used as the Rust parity target where documented.
 - `implementation-contract` — architecture-neutral property required of a correct engine implementation.
+- `external-spec` — behaviour governed outside both the DWN draft and Enbox: DID Core, DID methods, BEPs, RFCs, and wire protocols. Sources cite the external specification plus the deployed implementation that anchors it; an `external-spec` invariant must never be presented as normative DWN semantics or as Enbox-owned behaviour.
 
 An `enbox-parity` invariant must not be silently promoted to normative DWN behaviour. If draft and current Enbox semantics converge later, update the contract/source references deliberately while keeping the stable ID when the statement itself remains equivalent.
 
@@ -26,6 +27,7 @@ An `enbox-parity` invariant must not be silently promoted to normative DWN behav
 - `protocols.json`
 - `sync.json`
 - `identity-encryption.json`
+- `did-dht.json`
 
 ## Usage
 
