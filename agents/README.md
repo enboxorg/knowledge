@@ -49,7 +49,7 @@ All workflows must preserve the repository source hierarchy:
 
 When needed, inspect the actual current TypeScript and Rust source rather than relying only on summaries.
 
-An invariant ID is a traceability anchor, not proof that a statement is normative. Always preserve its `contract` class (`normative`, `enbox-parity`, or `implementation-contract`).
+An invariant ID is a traceability anchor, not proof that a statement is normative. Always preserve its `contract` class (`normative`, `enbox-parity`, `implementation-contract`, or `external-spec`).
 
 ## Local workspace expectation
 
