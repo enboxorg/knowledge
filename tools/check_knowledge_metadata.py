@@ -99,6 +99,24 @@ def check_invariants() -> None:
                 errors.append(f"{prefix}: contract must be one of {sorted(ALLOWED_INVARIANT_CONTRACTS)}")
             if not isinstance(sources, list) or not sources or not all(isinstance(source, str) and source.strip() for source in sources):
                 errors.append(f"{prefix}: sources must be a non-empty list of strings")
+            else:
+                for source in sources:
+                    if not (ROOT / source).is_file():
+                        errors.append(f"{prefix}: source {source} does not exist")
+            notes = item.get("source_notes", {})
+            if not isinstance(notes, dict) or not all(isinstance(v, str) and v.strip() for v in notes.values()):
+                errors.append(f"{prefix}: source_notes must map sources to non-empty strings")
+            elif isinstance(sources, list) and not set(notes) <= set(sources):
+                errors.append(f"{prefix}: source_notes keys must be listed in sources")
+            revisions = item.get("revisions", [])
+            if not isinstance(revisions, list):
+                errors.append(f"{prefix}: revisions must be a list")
+                revisions = []
+            for rev in revisions:
+                if not isinstance(rev, dict) or not all(isinstance(rev.get(k), str) and rev[k].strip() for k in ("date", "previous", "summary")):
+                    errors.append(f"{prefix}: each revision needs non-empty date, previous, and summary")
+                elif not DATE_RE.match(rev["date"]):
+                    errors.append(f"{prefix}: revision date must be YYYY-MM-DD")
 
 
 for path in sorted((ROOT / "dwn").glob("*.md")):
