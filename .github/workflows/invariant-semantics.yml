@@ -1,0 +1,33 @@
+name: invariant-semantics
+
+on:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test check policy
+        run: python test_check_invariant_semantics.py
+        working-directory: tools
+      - name: Check invariant semantics (advisory)
+        env:
+          TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            python tools/check_invariant_semantics.py --base "origin/${{ github.base_ref }}"
+          else
+            python tools/check_invariant_semantics.py --all
+          fi

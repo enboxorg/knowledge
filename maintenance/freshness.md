@@ -38,10 +38,22 @@ JSON files under `invariants/` must be machine-readable arrays whose entries inc
 
 - unique stable `id`;
 - non-empty `statement`;
-- `contract` in `normative`, `enbox-parity`, or `implementation-contract`;
-- non-empty `sources` list.
+- `contract` in `normative`, `enbox-parity`, `implementation-contract`, or `external-spec`;
+- non-empty `sources` list of existing knowledge pages.
 
-If the statement changes meaning, create a new ID rather than silently reusing the old one. If only provenance/status changes while the assertion remains equivalent, preserve the ID and deliberately update its contract/source links.
+Statement changes fall into three cases:
+
+- **rewording** — the assertion is equivalent; preserve the ID;
+- **refinement** — the same rule gains or loses a condition, exception, scope limit, or ordering detail; preserve the ID and append a `revisions` entry (`date`, `previous` statement, `summary` of the change) so code citing the ID can tell its meaning moved;
+- **different rule** — create a new ID rather than silently reusing the old one.
+
+If only provenance/status changes while the assertion remains equivalent, preserve the ID and deliberately update its contract/source links.
+
+An optional `source_notes` object maps a source path to why it is cited when that source does not itself state the invariant (for example, a draft page an `enbox-parity` invariant diverges from, or background context).
+
+`tools/check_invariant_semantics.py` runs in CI as an advisory check. It judges whether each changed statement is a rewording, refinement, or different rule, and whether the sources of changed invariants — and of invariants citing changed pages — support their statements. A refinement is acknowledged by its `revisions` entry; a doubtful source verdict is acknowledged by a `source_notes` entry or fixed at the source.
+
+The check reports a contradiction, and an invariant no source supports. It stays quiet about a source that merely does not state the rule once another source states it, because a `sources` list may carry context as well as the page the statement came from. Two further cases are expected rather than reported: a `dwn/` page contradicting an `enbox-parity` invariant, and a page that names a non-normative invariant's ID instead of restating it, which is the page deferring to the registry.
 
 ## Agent workflows
 

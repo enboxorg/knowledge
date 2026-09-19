@@ -8,7 +8,11 @@ The files are JSON arrays. Every invariant has:
 - `statement` — compact assertion;
 - `contract` — the source class the assertion belongs to;
 - `sources` — knowledge pages that explain/support it;
-- `related` — optional tests, implementation pages, ADRs, or tracked issues.
+- `related` — optional tests, implementation pages, ADRs, or tracked issues;
+- `revisions` — optional list of refinements that kept the ID, each with `date`, `previous` statement, and `summary`;
+- `source_notes` — optional map from a source path to why it is cited, for sources that do not themselves state the invariant.
+
+See `maintenance/freshness.md` for when a statement change keeps its ID.
 
 ## Contract classes
 
@@ -37,4 +41,4 @@ When reviewing code or answering a design question, prefer statements like:
 
 rather than relying on a vague memory of a long document.
 
-The metadata validator checks JSON syntax, required fields, allowed contract classes, and global ID uniqueness.
+The metadata validator checks JSON syntax, required fields, allowed contract classes, source existence, `revisions`/`source_notes` shape, and global ID uniqueness. The advisory semantic check (`tools/check_invariant_semantics.py`) judges statement changes and source support.

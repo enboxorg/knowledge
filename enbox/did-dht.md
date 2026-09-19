@@ -43,6 +43,9 @@ service (`_sN`), `alsoKnownAs` (`_aka`), controller (`_cnt`), type-index
 (`_typ`), and gateway (`NS`) records follow the v0 property mapping;
 defaults (`JsonWebKey`, key-type algorithms, thumbprint ids, single
 controllers) are omitted where decoding restores them (`DID-DHT-002`).
+A TXT character string holds at most 255 bytes, so a longer logical value
+spans segments, split on UTF-8 byte boundaries rather than inside a
+sequence (`DID-DHT-003`).
 
 ## Decoder normalizations
 
