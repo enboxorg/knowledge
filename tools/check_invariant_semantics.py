@@ -73,18 +73,23 @@ def load_invariants(ref: str | None) -> dict[str, dict]:
     return {item["id"]: item for text in texts for item in json.loads(text)}
 
 
-def ask(key: str, state: dict, question: dict) -> dict:
-    body = json.dumps({"state": state, "model": MODEL, "questions": {"q": question}}).encode()
+def ask_many(key: str, state: dict, questions: dict) -> dict:
+    """One request carrying any number of questions over the same state."""
+    body = json.dumps({"state": state, "model": MODEL, "questions": questions}).encode()
     headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
     for attempt in range(5):
         try:
-            with urllib.request.urlopen(urllib.request.Request(API_URL, body, headers), timeout=60) as resp:
-                return json.load(resp)["answers"]["q"]
+            with urllib.request.urlopen(urllib.request.Request(API_URL, body, headers), timeout=180) as resp:
+                return json.load(resp)["answers"]
         except urllib.error.HTTPError as exc:
             if exc.code not in (429, 529) or attempt == 4:
                 raise
             time.sleep(2**attempt)
     raise AssertionError("unreachable")
+
+
+def ask(key: str, state: dict, question: dict) -> dict:
+    return ask_many(key, state, {"q": question})["q"]
 
 
 def meaning_finding(before: str, item: dict, score: float) -> str | None:

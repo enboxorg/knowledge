@@ -92,6 +92,8 @@ Old review dates should trigger rechecking before high-impact decisions. Age alo
 
 A behaviour-changing Enbox PR should update affected knowledge, open/link a focused follow-up, or explicitly state why documentation/invariants are unaffected. Spec changes should similarly trigger review across dependent layers.
 
+`tools/check_knowledge_drift.py` proposes the checklist for that rule: it judges every invariant against the change and lists the pages documenting the affected ones. It reads a pull request (`--pr enboxorg/enbox#1684`), a local checkout in the sibling workspace (`--repo ../enbox-rust-core --range main...HEAD`), a diff on stdin, or an issue or design question (`--text`), so it can run against work in progress and against a task that has no code yet. `--pages` additionally ranks the knowledge pages themselves, which is how material no invariant cites is reached. The checklist is a starting point for the review, not the review; an invariant it misses is still in scope, and each listed page still needs one of the three resolutions above.
+
 ## Rebaseline procedure
 
 When adopting a new TypeScript Enbox parity baseline:

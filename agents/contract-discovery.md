@@ -61,6 +61,17 @@ Use this order:
 
 Use `builders/` and `examples/` only when the task concerns application/protocol design or they clarify a concrete semantic scenario.
 
+To choose what to read first, rank the registry and the pages against the task:
+
+```text
+<knowledge>/tools/check_knowledge_drift.py --pages --top 15 --json \
+    --text <issue file>            # an issue, bug report, or design question
+    --repo <checkout> --range <range>   # when the task already has code
+    --pr <owner/repo#number>       # a published pull request
+```
+
+The ranking orders the reading; it does not decide what is relevant. A low rank is not evidence that a semantic is unaffected, the ranking is not ordered by the source hierarchy above, and the tool reaches only what this repository holds. It requires `TYPESAFE_API_KEY` and prints a skip line without it; the retrieval order above stands on its own when the tool is unavailable.
+
 ### 3. Inspect source implementations
 
 When implementation behaviour matters, inspect the actual current code:

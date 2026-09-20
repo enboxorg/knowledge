@@ -20,8 +20,12 @@ jobs:
         with:
           python-version: '3.12'
       - name: Test check policy
-        run: python test_check_invariant_semantics.py
+        run: for test in test_*.py; do python "$test"; done
         working-directory: tools
+
+      - name: Check comment hygiene
+        if: github.event_name == 'pull_request'
+        run: python tools/check_comment_hygiene.py --repo . --range "origin/${{ github.base_ref }}...HEAD" --strict
       - name: Check invariant semantics (advisory)
         env:
           TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}

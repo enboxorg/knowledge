@@ -83,7 +83,19 @@ or agent-enumerated lists — as `NOTE`, with a follow-up to reword the comment 
 the code's own terms. The invariant-ID tag under the repository's agreed
 convention is the only process reference permitted in a comment.
 
+`<knowledge>/tools/check_comment_hygiene.py --repo <checkout> --range <range>` lists them
+from the diff. Every rule it applies is exact, so it needs no key and no calibration; read
+its output as the comments to reword, and check the ones it cannot match by reading.
+
 ### 4. Invariant coverage
+
+The approved packet names the controlling invariants. To check that list for omissions, or to work from a diff that has no packet, rank the registry against the change:
+
+```text
+<knowledge>/tools/check_knowledge_drift.py --repo <checkout> --range <range> --top 15 --pages --json
+```
+
+The ranking is a reading list. An invariant it misses is still in scope, a high rank is not a finding, and whether an invariant is preserved stays a review judgement made against its statement and sources. It requires `TYPESAFE_API_KEY` and prints a skip line without it.
 
 For each controlling invariant:
 
@@ -132,6 +144,8 @@ If so, require one of:
 - same-change knowledge update;
 - linked focused follow-up;
 - explicit explanation of why no update is necessary.
+
+`tools/check_knowledge_drift.py` in the knowledge repository proposes this checklist from the diff, reading a PR, a local checkout (`--repo ../enbox-rust-core --range main...HEAD`), or a diff on stdin. Treat its output as candidates to check, never as the set of affected pages.
 
 ## Required output
 
