@@ -196,6 +196,18 @@ externally anchored fixtures where they apply to the intended target, and retain
 behavioural rule each fixture illustrates. Resolve conflicts between fixtures, prose, and source
 evidence before approval.
 
+## Check the packet before asking for approval
+
+```text
+<knowledge>/tools/check_packet.py <packet>
+```
+
+It checks the packet's structure in code — the sections that must exist, whether the assumptions and test matrix tables have rows, whether cited invariant IDs exist — and asks of each binding statement whether an implementation producing the same observable behaviour by another route would still violate it. A yes means the statement belongs in the non-binding reference section, or needs a sentence saying why the mechanism is itself the contract.
+
+It also asks whether the packet presents Enbox parity behaviour as normative DWN semantics.
+
+None of this approves anything. It removes the errors a reader would otherwise spend attention on, so the human approval reads the assumptions rather than the formatting.
+
 ## Stop conditions
 
 Stop and ask for human resolution rather than implementing when:

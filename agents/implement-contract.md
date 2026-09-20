@@ -69,6 +69,31 @@ Avoid:
 - broad API redesign without explicit approval;
 - changing test expectations to fit current implementation behaviour.
 
+Before handing the change to review, run the repository's linters, type checks, and tests, then:
+
+```text
+<knowledge>/tools/check_change_quality.py --repo <checkout> --range <range> \
+    --intent <approved packet> --intent <issue> --questions <packet>.questions.json
+```
+
+### Derive the change's own questions
+
+The packet's test matrix already enumerates what must hold. Turn each row that the diff can answer into a question, and keep the file beside the packet as `<packet>.questions.json`:
+
+```json
+{
+  "prune_delete_wins": {
+    "instructions": "Does the change keep a prune delete winning over a write with a later timestamp?",
+    "scope": "change",
+    "label": "prune delete may lose to a later write"
+  }
+}
+```
+
+Write each one against what the packet requires, the issue reports, and the diff as it currently stands. `scope` is `change` for a behaviour the whole diff answers, `file` for one every changed file should be asked about.
+
+State observable behaviour, never mechanism: a question about how a value is compared flags the idiomatic substitutions this workflow allows, while a question about which operation wins does not. A question inherits the packet's errors, so a confident answer to a question the contract got wrong is still wrong — these check realization, not the contract. It raises unfinished behaviour, untested behaviour, dropped failure paths, ported mechanism, and work beyond the contract as candidates to resolve while the reasoning is still at hand. Resolve or dismiss each one deliberately; leaving it for the reviewer spends their independence on what the implementer already knew.
+
 ### Use invariant-linked semantic tests
 
 For semantic/conformance/parity tests, reference relevant invariant IDs using the repository's agreed convention, for example:

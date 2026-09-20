@@ -29,6 +29,25 @@ Required:
 - controlling invariant IDs;
 - target test matrix.
 
+## Mechanical checks first
+
+Run the target repository's own linters, type checks, and test suite before reviewing semantics. They decide formatting, lint, type, and test-failure questions exactly, and a review that re-argues them by hand wastes the reading.
+
+What those tools cannot see is code that compiles and lints cleanly while remaining unfinished, a behaviour change no test exercises, a failure path quietly dropped, or a mechanism ported from another language in preference to the local idiom. To raise those as candidates:
+
+```text
+<knowledge>/tools/check_change_quality.py --repo <checkout> --range <range> \
+    --intent <approved packet> --intent <issue> --questions <packet>.questions.json
+```
+
+Pass every statement of what the change is for: the approved packet, and the issue or plan behind it. `--questions` takes the change-specific questions derived from the packet's test matrix, as `agents/implement-contract.md` describes. Where the implementer left that file, re-run it rather than trusting the recorded answers, and write the questions the matrix deserves but the file omits — an implementer's question set is as partial as their reading of the contract.
+
+Pass the approved packet as the intent. Without it, scope and coverage are judged against the change's own commit messages, so a change cannot overreach its own account of itself — the failure this workflow exists to catch. With it, the tool also asks whether the change leaves any required behaviour unimplemented.
+
+Judge scope against the packet's binding section, as in dimension 1: a mechanism deviation is not overreach.
+
+Each answer is a candidate to confirm against the code, never a finding. Confirm it, then classify it with the severities below; an unconfirmed candidate belongs in no report.
+
 ## Review dimensions
 
 ### 1. Contract fidelity
