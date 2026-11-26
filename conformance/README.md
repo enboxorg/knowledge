@@ -19,6 +19,7 @@ They are not a replacement for the specification. Each checklist should be read 
 - `replication.md`
 - `encryption.md`
 - `identity-attestation-topology.md`
+- `agent-vault.md`
 
 ## How to use
 

@@ -1,0 +1,93 @@
+[
+  {
+    "id": "ENBOX-AGENT-001",
+    "statement": "Agent keys come from SLIP-0010 Ed25519 hardened paths `m/44'/0'/0'/0'/0'` (vault) and `m/44'/0'/1708523827'/0'/{0,1,2}'` (identity, signing, encryption); the CEK is HKDF-SHA512 over the vault private key with info `vault_cek`, and the unlock salt is HKDF-SHA512 over the 33-byte `0x00 || vault public key` with info `vault_unlock_salt`, so the pinned phrase yields CEK `b99ff78488da4c83cbe590b5374bfca38551eb47e65514667018cc33c91f4913`, salt `cf6389ce23de14b02e05413e1bcc3715f6fed4c2b0eda9412701279288f37d20`, and agent DID `did:dht:qftx7z968xcpfy1a1diu75pg5meap3gdtg6ezagaw849wdh6oubo`.",
+    "contract": "enbox-parity",
+    "sources": ["enbox/agent-vault.md"],
+    "related": ["enboxorg/enbox-rust-core#322", "enboxorg/enbox-rust-core#330"]
+  },
+  {
+    "id": "ENBOX-AGENT-002",
+    "statement": "Recovery-phrase acceptance equals TS `validateMnemonic` over the English wordlist: NFKD normalize, exactly single-space-separated words, 12/15/18/21/24 words, valid checksum; generated phrases are 12 words, and bad input is rejected before any durable write (`AgentIdentityInvalidMnemonic` in Rust).",
+    "contract": "enbox-parity",
+    "sources": ["enbox/agent-vault.md"],
+    "related": ["enboxorg/enbox-rust-core#322"]
+  },
+  {
+    "id": "ENBOX-AGENT-003",
+    "statement": "The vault persists three logical values: a CEK compact JWE with header `alg=PBES2-HS512+A256KW`, `enc=A256GCM`, `cty=text/plain`, `p2c`/`p2s`, whose plaintext is the oct JWK for the CEK; a DID compact JWE with `alg=dir`, `enc=A256GCM`, `cty=json` under that CEK; and a status JSON `{initialized, lastBackup, lastRestore}`.",
+    "contract": "enbox-parity",
+    "sources": ["enbox/agent-vault.md"],
+    "related": ["enboxorg/enbox-rust-core#323"]
+  },
+  {
+    "id": "ENBOX-AGENT-004",
+    "statement": "Vault readers accept any conforming producer (12-byte IV, AAD = ASCII encoded protected header, any `p2c >= 1`, any salt bytes, any header member order) while rejecting algorithms outside the allow-lists; an absent status entry reads as `{false,null,null}` and a present-but-invalid entry is a corrupt-vault error.",
+    "contract": "enbox-parity",
+    "sources": ["enbox/agent-vault.md"],
+    "related": ["enboxorg/enbox-rust-core#323", "enboxorg/enbox-rust-core#324"]
+  },
+  {
+    "id": "ENBOX-AGENT-005",
+    "statement": "The vault lifecycle is uninitialized/locked/unlocked: `initialize` rejects already-initialized before blank password and invalid phrase and writes CEK, DID, and status (`ENBOX-AGENT-010` owns the atomic-commit requirement); `unlock` drops any held CEK first and ends locked on a wrong password without writing; `lock` clears the CEK and errors only when uninitialized; `changePassword` preserves stored `p2s` and `p2c` (emitting `cty: text/plain`); and a failed `resetPasswordWithRecoveryPhrase` reports `HD_IDENTITY_VAULT_RECOVERY_PHRASE_MISMATCH` with a byte-identical store.",
+    "contract": "enbox-parity",
+    "sources": ["enbox/agent-vault.md"],
+    "related": ["ENBOX-AGENT-010", "enboxorg/enbox-rust-core#324", "enboxorg/enbox-rust-core#328"]
+  },
+  {
+    "id": "ENBOX-AGENT-006",
+    "statement": "A backup is `{dateCreated, size, data}` where `data` is unpadded base64url of the stored DID and CEK JWE strings plus the pre-call status, `size` is the character count of `data`, and `dateCreated` is UTC ISO-8601 with milliseconds; the call then persists `lastBackup`, and a successful restore stores the backup's entries verbatim with `lastBackup` merged from backup-or-current and `lastRestore` set.",
+    "contract": "enbox-parity",
+    "sources": ["enbox/agent-vault.md"],
+    "related": ["enboxorg/enbox-rust-core#324"]
+  },
+  {
+    "id": "ENBOX-AGENT-007",
+    "statement": "A backup whose status is not `initialized: true` is rejected by both runtimes before any commit; TypeScript reaches that outcome through its inner `unlock` after writing the status, so the rejection is Enbox parity rather than a Rust divergence.",
+    "contract": "enbox-parity",
+    "sources": ["enbox/agent-vault.md"],
+    "related": ["enboxorg/enbox-rust-core#324"]
+  },
+  {
+    "id": "ENBOX-AGENT-008",
+    "statement": "Vault-backed agent secrets persist as UTF-8 JSON `{jwe, expiresAt?}` where the JWE is `dir`/A256GCM under the shared identity CEK and an absent expiry is omitted; an unlocked read of `expiresAt <= now` deletes the entry and returns `None`, while non-envelope or legacy values fail as invalid envelopes (`AgentSecretInvalidEnvelope` in Rust) and never return plaintext.",
+    "contract": "enbox-parity",
+    "sources": ["enbox/agent-vault.md", "conformance/agent-vault.md"],
+    "related": ["enboxorg/enbox-rust-core#326"]
+  },
+  {
+    "id": "ENBOX-AGENT-009",
+    "statement": "The agent DID is `did:dht:<z-base-32 identity key>` with the `DID-DHT-006` document shape; a fresh `initialize` publishes it before committing vault state, recovery resolves it fresh and adopts or replaces only its `#dwn` service, and every republication passes the resolved sequence as `previous` so the submitted sequence exceeds it even after a clock rollback.",
+    "contract": "enbox-parity",
+    "sources": ["enbox/agent-vault.md", "enbox/did-dht.md"],
+    "related": ["enboxorg/enbox-rust-core#325", "DID-DHT-004", "DID-DHT-006"]
+  },
+  {
+    "id": "ENBOX-AGENT-010",
+    "statement": "Every vault mutation — initialize, password change, reset, backup's status update, and restore — commits all of its puts and deletes as one atomic store batch, so a crash or store error at any point leaves a reopened vault in exactly the pre- or post-mutation state, and an interrupted initialize reopens uninitialized; a backend that cannot commit atomically must fail rather than write sequentially.",
+    "contract": "implementation-contract",
+    "sources": ["enbox/agent-vault.md", "implementation/storage-contracts.md"],
+    "related": ["enboxorg/enbox-rust-core#324"]
+  },
+  {
+    "id": "ENBOX-AGENT-011",
+    "statement": "A lock, failed unlock, failed password change (after the blank-new-password pre-check), failed reset, failed restore, or vault drop leaves no reachable CEK or decrypted private key, intermediate derived key material does not outlive its operation, and gated reads, writes, encryption, and backup then fail with `AgentVaultLocked`.",
+    "contract": "implementation-contract",
+    "sources": ["enbox/agent-vault.md"],
+    "related": ["enboxorg/enbox-rust-core#324"]
+  },
+  {
+    "id": "ENBOX-AGENT-012",
+    "statement": "Lock truth has one owner: the vault's in-memory CEK, never a persisted or host-maintained flag; the CEK is never stored in plaintext, hosts obtain lock state from the vault, at most one live core may own a database path in a process, and two vault instances over one store are unsupported.",
+    "contract": "implementation-contract",
+    "sources": ["enbox/agent-vault.md"],
+    "related": ["enboxorg/enbox-rust-core#327", "enboxorg/enbox-rust-core#328"]
+  },
+  {
+    "id": "ENBOX-AGENT-013",
+    "statement": "Credential reads are gated unconditionally: a `VaultBackedSecretStore.get` while locked fails with `AgentVaultLocked` even for absent, expired, malformed, or legacy entries, and deletion remains available while locked without decryption; this is a Rust contract deliberately stronger than TypeScript, which returns undefined for absent entries and purges expired ones while locked.",
+    "contract": "implementation-contract",
+    "sources": ["enbox/agent-vault.md", "conformance/agent-vault.md"],
+    "related": ["enboxorg/enbox-rust-core#326"]
+  }
+]

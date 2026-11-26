@@ -32,6 +32,7 @@ An `enbox-parity` invariant must not be silently promoted to normative DWN behav
 - `sync.json`
 - `identity-encryption.json`
 - `did-dht.json`
+- `agent-vault.json`
 
 ## Usage
 
