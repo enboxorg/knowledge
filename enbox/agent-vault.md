@@ -316,13 +316,18 @@ would leave the other unlocked with a stale key.
 - `fixtures/interop/vault-jwe.json`: pinned TS values (`p2c = 1`) for the three
   at-rest entries, a data JWE, a binary JWE, and the derived URI.
 - `fixtures/interop/vault-secret-envelope.json`: pinned TS credential envelope.
-- `crates/dwn-rs-agent/tests/fixtures/vault-jwe-rust-to-ts.json` and
-  `vault-secret-rust-to-ts.json`: Rust-emitted counterparts.
+- `fixtures/interop/vault-backup.json`: pinned TS `HdIdentityVault.backup()`
+  payload (`p2c = 1`), restored in Rust onto both fresh and initialized stores.
+- `fixtures/interop/vault-phrase-acceptance.json`: 18-row pinned TS
+  `validateMnemonic(phrase, englishWordlist)` acceptance table.
+- `crates/dwn-rs-agent/tests/fixtures/vault-jwe-rust-to-ts.json`,
+  `vault-secret-rust-to-ts.json`, and `vault-backup-rust-to-ts.json`:
+  Rust-emitted counterparts.
 - Rust proves the TS→Rust direction (`tests/vault_jwe_interop.rs`,
-  `tests/vault_secret_store.rs`, `tests/vault_lifecycle.rs`); TS proves the
-  Rust→TS direction with optional `tools/conformance/typescript-vault-*.test.ts`
-  runners against an `ENBOX_TS_ROOT` checkout.
-- The backup/restore vector is assembled from the pinned TS vault values and
-  exercised on fresh and initialized stores.
+  `tests/vault_secret_store.rs`, `tests/vault_lifecycle.rs`,
+  `tests/api_conventions.rs`); TS proves the Rust→TS direction with optional
+  `tools/conformance/typescript-vault-{jwe,secret,backup,phrase}.test.ts`
+  runners against an `ENBOX_TS_ROOT` checkout (including `isPortableDid` and the
+  agent document shape).
 - Provenance is checked by `tools/conformance/check-fixture-provenance.sh`
   against `.enbox-version` in `enbox-rust-core`.
