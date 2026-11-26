@@ -1,7 +1,7 @@
 ---
 domain: conformance
 kind: guide
-reviewed: 2026-11-25
+reviewed: 2026-11-26
 ---
 
 # Agent Identity Vault Conformance
@@ -18,7 +18,18 @@ be relaxed toward it.
 ## Derivation and phrase acceptance
 
 - [ ] The pinned phrase derives the same CEK, unlock salt, and `did:dht` URI in
-      both runtimes (`ENBOX-AGENT-001`).
+      both runtimes for both `v1` (legacy) and `v2` (default) profiles
+      (`ENBOX-AGENT-001`).
+- [ ] Fresh `initialize` defaults to `v2` (`derivationVersion: 2`); explicit
+      `derivationVersion` (`1` or `2`) forces that profile, and invalid values
+      are rejected before any network or store write.
+- [ ] Recovery `initialize` without an explicit version probes `v2` first and
+      falls back to `v1` only on explicit `NotFound` (never on gateway,
+      transport, or malformed-response errors), falling through to `v2` if
+      neither is found.
+- [ ] `resetPasswordWithRecoveryPhrase` derives from the stored
+      `derivationVersion ?? 1` (covering legacy absent-field `v1`, explicit
+      `v1`, and `v2` vaults).
 - [ ] The unlock-salt input is the 33-byte `0x00 || vault public key`, not the
       32-byte compressed key; a 32-byte-input implementation produces a
       different salt and fails the vector.
@@ -46,7 +57,9 @@ be relaxed toward it.
 - [ ] Swapping the CEK entry to `dir` or the DID entry to `A128GCM` is rejected;
       `p2c = 0` is corrupt.
 - [ ] A present status entry missing `lastBackup` or `lastRestore`, or with wrong
-      types, fails every status-reading operation as corrupt and writes nothing.
+      types (including `derivationVersion` equal to `null`, `0`, `3`, or a
+      string), fails every status-reading operation as corrupt and writes
+      nothing; absent `derivationVersion` is accepted as legacy `v1`.
 
 ## Lifecycle and lock gates
 
@@ -87,7 +100,10 @@ be relaxed toward it.
 - [ ] A wrong `size` is accepted; padded base64url is accepted; unknown outer
       JSON members are ignored.
 - [ ] After restoring a backup whose `lastBackup` is null, the vault keeps its
-      current `lastBackup` value.
+      current `lastBackup` value; `derivationVersion` is taken strictly from the
+      backup (restoring a legacy `v1` backup without `derivationVersion` onto a
+      `v2` vault never leaks `2`, and a failed restore reverts the prior
+      `derivationVersion`).
 
 ## Vault-backed secrets
 

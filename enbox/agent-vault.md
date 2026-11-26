@@ -5,11 +5,13 @@ repositories:
   - enboxorg/enbox
   - enboxorg/enbox-rust-core
 upstream-baseline: c63bf424ac0997583db825e8a5fddf1507d30c40
-reviewed: 2026-11-25
+reviewed: 2026-11-26
 related-issues:
   - enbox-rust-core#308
   - enbox-rust-core#329
   - enbox-rust-core#330
+  - enbox-rust-core#353
+  - enbox#1701
 ---
 
 # Agent Identity Vault
@@ -31,16 +33,19 @@ generated at the pin.
 ## HD derivation
 
 BIP-39 phrase → seed with an empty passphrase, then SLIP-0010 Ed25519,
-hardened segments only:
+hardened segments only. Two derivation profiles exist (see
+`decisions/0009-vault-hd-derivation-v2.md`): `v2` (BIP-43 namespace, default for
+new vaults) and `v1` (legacy BIP-44 tree, retained for dual-derive fallback):
 
-| Key | Path |
-| --- | --- |
-| vault | `m/44'/0'/0'/0'/0'` |
-| identity | `m/44'/0'/1708523827'/0'/0'` |
-| signing | `m/44'/0'/1708523827'/0'/1'` |
-| encryption | `m/44'/0'/1708523827'/0'/2'` |
+| Key | `v1` (legacy) | `v2` (default) |
+| --- | --- | --- |
+| vault | `m/44'/0'/0'/0'/0'` | `m/43'/1708523827'/0'/0'` |
+| identity | `m/44'/0'/1708523827'/0'/0'` | `m/43'/1708523827'/1'/0'/0'` |
+| signing | `m/44'/0'/1708523827'/0'/1'` | `m/43'/1708523827'/1'/0'/1'` |
+| encryption | `m/44'/0'/1708523827'/0'/2'` | `m/43'/1708523827'/1'/0'/2'` |
 
-The encryption key's 32 bytes are the X25519 private key.
+The encryption key's 32 bytes are the X25519 private key. Both profiles use the
+exact same HKDF inputs; only the four paths differ:
 
 - CEK = HKDF-SHA512(empty salt, vault private key, `"vault_cek"`, 32 bytes).
 - Unlock salt = HKDF-SHA512(empty salt, `0x00 ‖ vault Ed25519 public key`,
@@ -53,19 +58,22 @@ yields one salt and one CEK in both runtimes. The pre-parity Rust build hashed
 the 32 raw bytes and produced a different salt; the plaintext vault path was
 never released, so no store depends on it.
 
-Vector for `abandon ×11 about`: CEK
-`b99ff78488da4c83cbe590b5374bfca38551eb47e65514667018cc33c91f4913`,
-salt `cf6389ce23de14b02e05413e1bcc3715f6fed4c2b0eda9412701279288f37d20`,
-agent DID `did:dht:qftx7z968xcpfy1a1diu75pg5meap3gdtg6ezagaw849wdh6oubo`.
+Vectors for `abandon ×11 about`:
 
-**Upstream debt.** Both path families reuse the BIP-44 Bitcoin coin type `0'`;
-the vault path is string-identical to a BTC first-receiving path. Today only the
-SLIP-0010 `"ed25519 seed"` vs BIP-32 `"Bitcoin seed"` separation keeps the bytes
-apart. The proposed direction is a BIP-43 purpose tree (`m/43'/…`, levels
-upstream's), tracked in `enbox-rust-core#330` against
-`enboxorg/enbox#1701`. No path changes under this parity work, because a change
-rotates CEK, salt, agent DID, DWN tenant, backups, and vault-backed secret
-envelopes at once.
+- **`v1` (legacy)**: CEK
+  `b99ff78488da4c83cbe590b5374bfca38551eb47e65514667018cc33c91f4913`, salt
+  `cf6389ce23de14b02e05413e1bcc3715f6fed4c2b0eda9412701279288f37d20`, agent DID
+  `did:dht:qftx7z968xcpfy1a1diu75pg5meap3gdtg6ezagaw849wdh6oubo`.
+- **`v2` (default)**: CEK
+  `a19daef652efd7e05e22a9184a244d63983fd5ef2714b113b8d60dc53028fd67`, salt
+  `faa7f7433146bb721fd77c7b6a1cc6dc4725886130d6f05582eabca26bde85c0`, agent DID
+  `did:dht:3pcjxsbcm5py5xaffs4uppp8ywubyy9bw4erbicw7qrkue1t81uo`.
+
+Daily operations (`unlock`, `changePassword`, `backup`, `restore`, `getDid`,
+`encryptData`/`decryptData`, `VaultBackedSecretStore`) do not run HD
+derivation, so existing `v1` vaults and backups continue working without forced
+re-onboarding or DWN tenant migration. Only `initialize` and
+`resetPasswordWithRecoveryPhrase` invoke HD derivation.
 
 ## Recovery phrase acceptance
 
@@ -105,10 +113,12 @@ plaintext is the UTF-8 JSON oct JWK `{"k":"<base64url CEK>","kty":"oct","kid":"<
 **DID entry.** `dir`/`A256GCM` under the CEK, `cty: "json"`, encrypting the
 `PortableDid` JSON.
 
-**Status entry.** `{"initialized":bool,"lastBackup":string|null,"lastRestore":string|null}`.
-An absent entry reads as `{false,null,null}`; a present entry must carry both
-timestamp keys (null or string) or every status-reading operation fails as
-corrupt.
+**Status entry.** `{"initialized":bool,"lastBackup":string|null,"lastRestore":string|null,"derivationVersion"?:1|2}`.
+An absent entry reads as `{false,null,null}` (omitting `derivationVersion`); a
+present entry must carry both timestamp keys (null or string) or every
+status-reading operation fails as corrupt. When `derivationVersion` is absent it
+defaults to `1` (legacy `v1`); an explicit `null` or any value other than `1` or
+`2` is corrupt.
 
 Readers accept any conforming producer: 12-byte IV, AAD = ASCII of the encoded
 protected header, any `p2c ≥ 1`, any `p2s` length or content, any header member
@@ -127,12 +137,12 @@ locked and writes nothing.
 
 | Operation | Observable behaviour |
 | --- | --- |
-| `initialize(password, phrase?, endpoints?)` | Errors already-initialized, then blank password, then invalid phrase. Publishes/reconciles the agent DID, then commits CEK, DID, and status in one atomic write. Ends unlocked; Rust returns the phrase with the `PortableDid`, TS returns the phrase. Any failure leaves the store unchanged and the vault uninitialized. |
+| `initialize(password, phrase?, endpoints?, derivationVersion?)` | Errors already-initialized, then blank password, then invalid phrase, then invalid `derivationVersion` (must be `1` or `2` when supplied). Fresh `initialize` defaults to `v2`; recovery `initialize` without an explicit version resolves `v2` on DHT and falls back to `v1` **only** on explicit `NotFound` (never on gateway/transport/malformed errors), falling through to `v2` if neither is found; explicit `derivationVersion` skips auto-fallback. Publishes/reconciles the agent DID, then commits CEK, DID, and status (with `derivationVersion`) in one atomic write. Ends unlocked; Rust returns the phrase with the `PortableDid`, TS returns the phrase. Any failure leaves the store unchanged and the vault uninitialized. |
 | `unlock(password)` | Uninitialized errors. Drops any held CEK first. Auth failure is `AgentVaultInvalidPassword`; a structurally invalid CEK entry is `AgentVaultCorrupt`. Never writes; failure ends locked. |
 | `lock()` | Clears the CEK and any cached DID, then errors if uninitialized. Idempotent on an initialized vault. |
 | `getDid()` / `get_did()` | `AgentVaultLocked` while locked or uninitialized. A corrupt DID entry is `AgentVaultCorrupt` and leaves the vault unlocked. Returns an isolated copy. |
 | `changePassword(old, new)` | Uninitialized errors; a blank `new` is `AgentVaultBlankPassword` **before** the CEK is dropped. A wrong `old` ends locked with the store byte-identical. Success re-wraps the same CEK, preserving stored `p2s` and `p2c` (emitting `cty: text/plain`); DID and status are unchanged; ends unlocked. |
-| `resetPasswordWithRecoveryPhrase(phrase, password, endpoints?)` | Uninitialized, then drops the CEK, then blank password, invalid phrase, then mismatch. Mismatch means the stored DID entry does not decrypt under the phrase-derived CEK or its URI differs; code is exactly `HD_IDENTITY_VAULT_RECOVERY_PHRASE_MISMATCH` and the store is byte-identical. Success writes a fresh CEK wrap (and a reconciled DID) atomically and ends unlocked. Without endpoints (and without the crate-internal defer flag) there is no network access. |
+| `resetPasswordWithRecoveryPhrase(phrase, password, endpoints?)` | Uninitialized, then drops the CEK, then blank password, invalid phrase, then mismatch. Derives using the stored status's `derivationVersion ?? 1`. Mismatch means the stored DID entry does not decrypt under the phrase-derived CEK or its URI differs; code is exactly `HD_IDENTITY_VAULT_RECOVERY_PHRASE_MISMATCH` and the store is byte-identical. Success writes a fresh CEK wrap (and a reconciled DID) atomically while preserving `derivationVersion`, and ends unlocked. Without endpoints (and without the crate-internal defer flag) there is no network access. |
 | `backup()` | Requires initialized and unlocked. Format below. |
 | `restore(backup, password)` | Semantics below. |
 | `encryptData` / `decryptData` | `AgentVaultLocked` while locked; `dir`/`A256GCM` compact JWE under the CEK. A decrypt failure leaves the vault unlocked. |
@@ -177,8 +187,10 @@ outer JSON members are ignored. A wrong password fails with
 
 On success the backup's CEK and DID strings are stored verbatim (so the backup's
 `p2c`/`p2s` persist), the status becomes
-`{initialized: true, lastBackup: backup.lastBackup ?? current.lastBackup, lastRestore: now}`,
-and the vault ends unlocked.
+`{initialized: true, lastBackup: backup.lastBackup ?? current.lastBackup, lastRestore: now}`
+with `derivationVersion` taken strictly from the backup's status (absent in a
+legacy `v1` backup must never inherit `2` from a prior local vault), and the
+vault ends unlocked.
 
 Restore is allowed onto an uninitialized store, under the same rules; a failed
 restore leaves it uninitialized. Every failed restore, including a malformed
@@ -300,7 +312,10 @@ Hosts drive one shared vault through `EnboxCore`: `initialize_vault`,
 `vault_status`, `current_agent_identity`. There is no passwordless unlock and no
 shadow lock flag: every lock-gated surface reads the vault's own state, so a
 freshly opened core is locked until initialized, restored, or unlocked with the
-password. `vault_status` reports `{initialized, locked, lastBackup, lastRestore}`.
+password. `vault_status` reports `{initialized, locked, lastBackup, lastRestore, derivationVersion?}`
+(omitting `derivationVersion` when absent), and `initialize_vault` /
+`initialize_agent_identity` accept an optional `derivationVersion` (`1` or `2`,
+validated before any write or network call).
 An unlock reason is recorded only after a successful password unlock and cleared
 on lock or any locking failure. A malformed reset request body is a JSON error;
 the vault is untouched.

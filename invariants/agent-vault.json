@@ -1,10 +1,10 @@
 [
   {
     "id": "ENBOX-AGENT-001",
-    "statement": "Agent keys come from SLIP-0010 Ed25519 hardened paths `m/44'/0'/0'/0'/0'` (vault) and `m/44'/0'/1708523827'/0'/{0,1,2}'` (identity, signing, encryption); the CEK is HKDF-SHA512 over the vault private key with info `vault_cek`, and the unlock salt is HKDF-SHA512 over the 33-byte `0x00 || vault public key` with info `vault_unlock_salt`, so the pinned phrase yields CEK `b99ff78488da4c83cbe590b5374bfca38551eb47e65514667018cc33c91f4913`, salt `cf6389ce23de14b02e05413e1bcc3715f6fed4c2b0eda9412701279288f37d20`, and agent DID `did:dht:qftx7z968xcpfy1a1diu75pg5meap3gdtg6ezagaw849wdh6oubo`.",
+    "statement": "Agent keys come from SLIP-0010 Ed25519 hardened paths under either v2 (default: `m/43'/1708523827'/0'/0'` vault and `m/43'/1708523827'/1'/0'/{0,1,2}'` identity/signing/encryption) or legacy v1 (`m/44'/0'/0'/0'/0'` vault and `m/44'/0'/1708523827'/0'/{0,1,2}'` identity/signing/encryption); both profiles use HKDF-SHA512 over the vault private key with info `vault_cek` for the CEK and over the 33-byte `0x00 || vault public key` with info `vault_unlock_salt` for the unlock salt, so the pinned phrase yields v1 CEK `b99ff78488da4c83cbe590b5374bfca38551eb47e65514667018cc33c91f4913`, salt `cf6389ce23de14b02e05413e1bcc3715f6fed4c2b0eda9412701279288f37d20`, DID `did:dht:qftx7z968xcpfy1a1diu75pg5meap3gdtg6ezagaw849wdh6oubo` and v2 CEK `a19daef652efd7e05e22a9184a244d63983fd5ef2714b113b8d60dc53028fd67`, salt `faa7f7433146bb721fd77c7b6a1cc6dc4725886130d6f05582eabca26bde85c0`, DID `did:dht:3pcjxsbcm5py5xaffs4uppp8ywubyy9bw4erbicw7qrkue1t81uo`.",
     "contract": "enbox-parity",
-    "sources": ["enbox/agent-vault.md"],
-    "related": ["enboxorg/enbox-rust-core#322", "enboxorg/enbox-rust-core#330"]
+    "sources": ["enbox/agent-vault.md", "decisions/0009-vault-hd-derivation-v2.md"],
+    "related": ["enboxorg/enbox-rust-core#322", "enboxorg/enbox-rust-core#330", "enboxorg/enbox-rust-core#353", "enboxorg/enbox#1701"]
   },
   {
     "id": "ENBOX-AGENT-002",
@@ -29,17 +29,17 @@
   },
   {
     "id": "ENBOX-AGENT-005",
-    "statement": "The vault lifecycle is uninitialized/locked/unlocked: `initialize` rejects already-initialized before blank password and invalid phrase and writes CEK, DID, and status (`ENBOX-AGENT-010` owns the atomic-commit requirement); `unlock` drops any held CEK first and ends locked on a wrong password without writing; `lock` clears the CEK and errors only when uninitialized; `changePassword` preserves stored `p2s` and `p2c` (emitting `cty: text/plain`); and a failed `resetPasswordWithRecoveryPhrase` reports `HD_IDENTITY_VAULT_RECOVERY_PHRASE_MISMATCH` with a byte-identical store.",
+    "statement": "The vault lifecycle is uninitialized/locked/unlocked: `initialize` rejects already-initialized before blank password, invalid phrase, and invalid `derivationVersion`, defaults fresh vaults to `v2`, falls back `v2 -> v1` on recovery only on explicit `NotFound` (never on gateway or transport errors), and writes CEK, DID, and status (`ENBOX-AGENT-010` owns the atomic-commit requirement); `unlock` drops any held CEK first and ends locked on a wrong password without writing; `lock` clears the CEK and errors only when uninitialized; `changePassword` preserves stored `p2s` and `p2c` (emitting `cty: text/plain`); and `resetPasswordWithRecoveryPhrase` derives using the stored `derivationVersion ?? 1` and reports `HD_IDENTITY_VAULT_RECOVERY_PHRASE_MISMATCH` with a byte-identical store on mismatch.",
     "contract": "enbox-parity",
-    "sources": ["enbox/agent-vault.md"],
-    "related": ["ENBOX-AGENT-010", "enboxorg/enbox-rust-core#324", "enboxorg/enbox-rust-core#328"]
+    "sources": ["enbox/agent-vault.md", "decisions/0009-vault-hd-derivation-v2.md"],
+    "related": ["ENBOX-AGENT-010", "enboxorg/enbox-rust-core#324", "enboxorg/enbox-rust-core#328", "enboxorg/enbox-rust-core#353"]
   },
   {
     "id": "ENBOX-AGENT-006",
-    "statement": "A backup is `{dateCreated, size, data}` where `data` is unpadded base64url of the stored DID and CEK JWE strings plus the pre-call status, `size` is the character count of `data`, and `dateCreated` is UTC ISO-8601 with milliseconds; the call then persists `lastBackup`, and a successful restore stores the backup's entries verbatim with `lastBackup` merged from backup-or-current and `lastRestore` set.",
+    "statement": "A backup is `{dateCreated, size, data}` where `data` is unpadded base64url of the stored DID and CEK JWE strings plus the pre-call status (preserving `derivationVersion` when present), `size` is the character count of `data`, and `dateCreated` is UTC ISO-8601 with milliseconds; the call then persists `lastBackup`, and a successful restore stores the backup's entries verbatim with `lastBackup` merged from backup-or-current, `derivationVersion` taken strictly from the backup (absent legacy `v1` never inherits `2`), and `lastRestore` set.",
     "contract": "enbox-parity",
-    "sources": ["enbox/agent-vault.md"],
-    "related": ["enboxorg/enbox-rust-core#324"]
+    "sources": ["enbox/agent-vault.md", "decisions/0009-vault-hd-derivation-v2.md"],
+    "related": ["enboxorg/enbox-rust-core#324", "enboxorg/enbox-rust-core#353"]
   },
   {
     "id": "ENBOX-AGENT-007",
