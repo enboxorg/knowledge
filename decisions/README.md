@@ -22,6 +22,8 @@ Prefer focused ADR-style documents over broad design essays.
 - [ADR 0005: Read-Time Record-Limit Occupancy Follows Current Enbox Parity](0005-read-time-record-limit-occupancy.md)
 - [ADR 0006: RecordsDelete Carries a Grant Invocation Per Current Enbox Parity](0006-records-delete-grant-invocation-parity.md)
 - [ADR 0007: Structural Parent Ancestry Uses Retained Writes; Only Prune Removes Ancestry](0007-retained-parent-ancestry.md)
+- [ADR 0008: did:dht Targets External Spec with Selective Enbox Parity](0008-did-dht-external-spec-parity.md)
+- [ADR 0009: Agent Vault HD Derivation Moves to BIP-43 v2 with Dual-Derive Fallback](0009-vault-hd-derivation-v2.md)
 
 ## Lifecycle
 
