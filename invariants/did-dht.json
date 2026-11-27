@@ -50,30 +50,58 @@
   },
   {
     "id": "DID-DHT-008",
-    "statement": "Current TypeScript Enbox enforces the 1000-byte BEP44 limit on the signing preimage instead of the value; corrections check `v` alone.",
+    "statement": "Pre-`enbox#1714` (`c63bf424`) TypeScript Enbox enforced the 1000-byte BEP44 limit on the signing preimage instead of the value; fixed in `enbox#1714` (`05b41776`), so TypeScript `>= 05b41776` and Rust both check `v` alone and satisfy `DID-DHT-004`.",
     "contract": "enbox-parity",
     "sources": ["enbox/did-dht.md"],
-    "related": ["decisions/0008-did-dht-external-spec-parity.md", "enboxorg/enbox-rust-core#317"]
+    "related": ["decisions/0008-did-dht-external-spec-parity.md", "enboxorg/enbox#1714", "enboxorg/enbox-rust-core#317"],
+    "revisions": [
+      {
+        "date": "2026-11-27",
+        "previous": "Current TypeScript Enbox enforces the 1000-byte BEP44 limit on the signing preimage instead of the value; corrections check `v` alone.",
+        "summary": "Records the defect as pre-`enbox#1714` history after `enbox#1714` (`05b41776`) fixed it."
+      }
+    ]
   },
   {
     "id": "DID-DHT-009",
-    "statement": "Current TypeScript Enbox splits TXT values at UTF-16 code-unit boundaries instead of UTF-8 byte boundaries.",
+    "statement": "Pre-`enbox#1714` (`c63bf424`) TypeScript Enbox split TXT values at UTF-16 code-unit boundaries instead of UTF-8 byte boundaries; fixed in `enbox#1714` (`05b41776`), so TypeScript `>= 05b41776` and Rust both chunk at 255-byte UTF-8 boundaries and satisfy `DID-DHT-003`.",
     "contract": "enbox-parity",
     "sources": ["enbox/did-dht.md"],
-    "related": ["decisions/0008-did-dht-external-spec-parity.md", "enboxorg/enbox-rust-core#317"]
+    "related": ["decisions/0008-did-dht-external-spec-parity.md", "enboxorg/enbox#1714", "enboxorg/enbox-rust-core#317"],
+    "revisions": [
+      {
+        "date": "2026-11-27",
+        "previous": "Current TypeScript Enbox splits TXT values at UTF-16 code-unit boundaries instead of UTF-8 byte boundaries.",
+        "summary": "Records the defect as pre-`enbox#1714` history after `enbox#1714` (`05b41776`) fixed it."
+      }
+    ]
   },
   {
     "id": "DID-DHT-010",
-    "statement": "Current TypeScript Enbox parses TXT properties by splitting on every `=`, truncating values that contain it.",
+    "statement": "Pre-`enbox#1714` (`c63bf424`) TypeScript Enbox parsed TXT properties by splitting on every `=`, truncating values that contain it; fixed in `enbox#1714` (`05b41776`), so TypeScript `>= 05b41776` and Rust both split on the first `=` only.",
     "contract": "enbox-parity",
     "sources": ["enbox/did-dht.md"],
-    "related": ["decisions/0008-did-dht-external-spec-parity.md", "enboxorg/enbox-rust-core#317"]
+    "related": ["decisions/0008-did-dht-external-spec-parity.md", "enboxorg/enbox#1714", "enboxorg/enbox-rust-core#317"],
+    "revisions": [
+      {
+        "date": "2026-11-27",
+        "previous": "Current TypeScript Enbox parses TXT properties by splitting on every `=`, truncating values that contain it.",
+        "summary": "Records the defect as pre-`enbox#1714` history after `enbox#1714` (`05b41776`) fixed it."
+      }
+    ]
   },
   {
     "id": "DID-DHT-011",
-    "statement": "Current TypeScript Enbox emits the full gateway URI, not its host, as NS record data.",
+    "statement": "Pre-`enbox#1714` (`c63bf424`) TypeScript Enbox emitted the full gateway URI, not its host, as NS record data; `enbox#1714` (`05b41776`) emits the normalized gateway host in FQDN form, omits NS records for IP-literal gateways, and passes through unparseable or host-less URIs as before, so TypeScript `>= 05b41776` and Rust both satisfy `DID-DHT-003`.",
     "contract": "enbox-parity",
     "sources": ["enbox/did-dht.md"],
-    "related": ["decisions/0008-did-dht-external-spec-parity.md", "enboxorg/enbox-rust-core#317"]
+    "related": ["decisions/0008-did-dht-external-spec-parity.md", "enboxorg/enbox#1714", "enboxorg/enbox#1718", "enboxorg/enbox-rust-core#317"],
+    "revisions": [
+      {
+        "date": "2026-11-27",
+        "previous": "Current TypeScript Enbox emits the full gateway URI, not its host, as NS record data.",
+        "summary": "Records the defect as pre-`enbox#1714` history after `enbox#1714` (`05b41776`) fixed it."
+      }
+    ]
   }
 ]

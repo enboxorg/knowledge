@@ -62,3 +62,15 @@ lossy normalizations cannot support. Cross-runtime fixtures pin the repo
 
 - `DID-DHT-001`–`DID-DHT-011`
 - enboxorg/enbox-rust-core#317, #308, #314; PR #318
+
+## Follow-up (2026-11-27)
+
+`enboxorg/enbox#1714` (`05b41776`) fixed all four TypeScript codec defects
+in their owning repository: the 1000-byte limit now applies to `v`
+(`DID-DHT-008`), TXT segments are at most 255 UTF-8 bytes split at
+code-point boundaries (`DID-DHT-009`), TXT pairs split on the first `=`
+(`DID-DHT-010`), and NS records carry the gateway host in FQDN form
+(`DID-DHT-011`), with unparseable gateway URIs passed through pending
+`enboxorg/enbox#1718`. `enboxorg/enbox#1616` (`175222e6`) canonicalized
+absent and legacy `a=undefined` JWK `alg` values. The decision stands;
+only the "defects stay open" consequence is now history.

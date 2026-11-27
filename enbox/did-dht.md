@@ -4,11 +4,14 @@ kind: implementation
 repositories:
   - enboxorg/enbox
   - enboxorg/enbox-rust-core
-upstream-baseline: c63bf424ac0997583db825e8a5fddf1507d30c40
-reviewed: 2026-09-16
+upstream-baseline: 05b41776e92bd1f42462726d7a7d4bb2a0fcb9de
+reviewed: 2026-11-27
 related-issues:
   - enbox-rust-core#317
   - enbox-rust-core#308
+  - enbox#1714
+  - enbox#1616
+  - enbox#1718
 ---
 
 # did:dht in Enbox
@@ -18,7 +21,9 @@ framing, and Pkarr publication, as implemented in
 `packages/dids/src/methods/` (`did-dht.ts`, `did-dht-dns.ts`,
 `did-dht-pkarr.ts`) with agent creation in
 `packages/agent/src/hd-identity-vault.ts`. DID-method behaviour: nothing
-here is normative DWN semantics.
+here is normative DWN semantics. The `upstream-baseline` is `05b41776`
+(`enbox#1714`), which fixed the four codec defects documented against the
+previous baseline `c63bf424`.
 
 ## DID format
 
@@ -62,11 +67,27 @@ value. Relay bodies are `signature || sequence_be || v` PUT as
 (`DID-DHT-004`, `DID-DHT-005`). The deployed gateway checks key,
 signature, length, and recency only.
 
-## Known TypeScript divergences
+## Resolved TypeScript defects
 
-`DID-DHT-008` (preimage-length limit), `DID-DHT-009` (UTF-16 chunking),
-`DID-DHT-010` (`split('=')` parsing), `DID-DHT-011` (URI-valued NS data,
-live in the publish fixture). Rust corrects rather than copies all four.
+Baseline `c63bf424` carried four codec defects: the 1000-byte BEP44 limit
+was checked on the signing preimage instead of `v` (`DID-DHT-008`); TXT
+values were chunked at UTF-16 code units (`DID-DHT-009`); TXT properties
+split on every `=` (`DID-DHT-010`); and the gateway URI, not its host, was
+emitted as NS data (`DID-DHT-011`, live in the publish fixture).
+`enbox#1714` (`05b41776`) fixed all four: the limit is checked on `v`, TXT
+segments are at most 255 UTF-8 bytes split at code-point boundaries, pairs
+split on the first `=` only, and NS data is the normalized gateway host in
+FQDN form (IP-literal gateways emit no NS record). Gateway URIs that cannot
+be parsed or have no host keep the historical passthrough rather than being
+rejected, with strict validation left open in `enbox#1718`. TypeScript at
+`>= 05b41776` and Rust now both satisfy `DID-DHT-003` and `DID-DHT-004`;
+`DID-DHT-008`–`DID-DHT-011` record the pre-`enbox#1714` behaviour only.
+
+`enbox#1616` (`175222e6`) canonicalized JWK `alg` handling: encoding omits
+`a` when a key has no algorithm or the key-type default, and decoding maps
+an absent value or the legacy literal `a=undefined` to the default, so
+create/encode/decode round trips stay stable (`DID-DHT-006`).
+
 Separately, the DID DHT registry table transposes the `enc`/`sig` wire
 labels while its examples preserve names; follow the examples and file a
 registry correction.
