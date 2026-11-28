@@ -4,8 +4,8 @@ kind: implementation
 repositories:
   - enboxorg/enbox
   - enboxorg/enbox-rust-core
-upstream-baseline: c63bf424ac0997583db825e8a5fddf1507d30c40
-reviewed: 2026-08-28
+upstream-baseline: 1d02b19555f256ecb9f7df5a47048425c549a6d7
+reviewed: 2026-11-28
 ---
 
 # Enbox Architecture
@@ -51,7 +51,7 @@ Replication feeds messages back through the same admission semantics rather than
 
 ## Major implementation boundaries
 
-- **DWN engine**: message parsing, validation, authorization, Records/Protocols/Messages handlers.
+- **DWN engine**: message parsing, validation, authorization, Records/Modules/Messages handlers (using `Modules` wire vocabulary and `application/vnd.enbox.dwn-rpc` single HTTP body framing as `enbox-parity`; see `decisions/0010-protocols-to-modules-parity.md`).
 - **Stores**: durable messages, data, feed metadata, resumable tasks.
 - **Identity/signatures**: DID resolution and JWS verification.
 - **Agent/runtime**: link planning, sync orchestration, session state, remote transport. Rust owner: `dwn-rs-agent` (agent identity/vault, `auth` registration/connect); reference: `@enbox/agent` with `@enbox/auth` above it.
